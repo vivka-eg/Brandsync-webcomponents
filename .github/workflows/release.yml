@@ -1,4 +1,4 @@
-name: Release
+name: Release - Version & Publish
 
 on:
   push:
@@ -14,32 +14,39 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
-  release:
+  version-or-publish:
+    name: Open Version Packages PR, or publish if none pending
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - name: Check out repository
+        uses: actions/checkout@v4
         with:
           # changesets/action needs full history to diff which packages changed.
           fetch-depth: 0
-      - uses: actions/setup-node@v4
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
         with:
           # 22, not 20: @changesets/cli calls Node's built-in module.enableCompileCache(),
           # which only exists from Node 22.1.0+ -- confirmed directly via a real CI failure
           # ("enableCompileCache is not a function") on Node 20.20.2.
           node-version: 22
           cache: npm
-      - run: npm ci
+      - name: Install dependencies
+        run: npm ci
       - name: Cache Playwright browsers
         uses: actions/cache@v4
         with:
           path: ~/.cache/ms-playwright
           key: playwright-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
-      - run: npx playwright install --with-deps chromium
+      - name: Install Playwright's Chromium
+        run: npx playwright install --with-deps chromium
       # Re-running the full build + test suite here (even though the tagged commit already passed
       # ci.yml on push) is intentional redundancy -- guards against main having moved between the
       # PR merge and this job actually running, not just re-checking the same commit twice.
-      - run: npm run build:all
-      - run: npm test
+      - name: Build @brandsync/wc, @brandsync/react, @brandsync/angular
+        run: npm run build:all
+      - name: Run test suite
+        run: npm test
 
       # If there are unreleased .changeset/*.md files on main, this opens/updates a "Version
       # Packages" PR (running `changeset version` for you -- lockstepped bumps + CHANGELOGs,

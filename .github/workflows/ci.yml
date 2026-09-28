@@ -1,4 +1,4 @@
-name: CI
+name: CI - Build & Test
 
 on:
   push:
@@ -7,16 +7,20 @@ on:
     branches: [main]
 
 jobs:
-  test:
+  build-and-test:
+    name: Build all packages & run tests
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - name: Check out repository
+        uses: actions/checkout@v4
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
         with:
           # Matches release.yml's node-version -- see that file's comment for why 22 specifically.
           node-version: 22
           cache: npm
-      - run: npm ci
+      - name: Install dependencies
+        run: npm ci
       # Cached separately from npm's own dependency cache above -- keyed on the exact Playwright
       # version so a bump to that dependency correctly invalidates and re-downloads Chromium,
       # rather than silently reusing a stale/incompatible browser binary.
@@ -25,6 +29,9 @@ jobs:
         with:
           path: ~/.cache/ms-playwright
           key: playwright-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
-      - run: npx playwright install --with-deps chromium
-      - run: npm run build:all
-      - run: npm test
+      - name: Install Playwright's Chromium
+        run: npx playwright install --with-deps chromium
+      - name: Build @brandsync/wc, @brandsync/react, @brandsync/angular
+        run: npm run build:all
+      - name: Run test suite
+        run: npm test
