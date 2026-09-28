@@ -26,7 +26,7 @@ publish_if_new() {
     echo "Skipping $name@$version -- already on the registry."
   else
     echo "Publishing $name@$version from $dir..."
-    npm publish "$dir"
+    npm publish "./$dir"
   fi
 }
 
