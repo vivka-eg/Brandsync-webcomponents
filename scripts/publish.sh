@@ -27,6 +27,12 @@ publish_if_new() {
   else
     echo "Publishing $name@$version from $dir..."
     npm publish "./$dir"
+    # changesets/action detects what got published by scanning this script's stdout for
+    # "New tag: <pkg>@<version>" -- that's the exact line @changesets/cli's own `publish`
+    # command prints, NOT npm publish's own "+ pkg@version" line above. Without this,
+    # outputs.published/publishedPackages stay false/empty even on a real successful
+    # publish, silently skipping the downstream Brandsync-react notify step.
+    echo "New tag: $name@$version"
   fi
 }
 
