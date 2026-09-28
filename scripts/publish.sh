@@ -19,8 +19,8 @@ publish_if_new() {
   local dir="$1"
   local name
   local version
-  name=$(node -p "require('$dir/package.json').name")
-  version=$(node -p "require('$dir/package.json').version")
+  name=$(node -p "require('$(pwd)/$dir/package.json').name")
+  version=$(node -p "require('$(pwd)/$dir/package.json').version")
 
   if npm view "$name@$version" version >/dev/null 2>&1; then
     echo "Skipping $name@$version -- already on the registry."
