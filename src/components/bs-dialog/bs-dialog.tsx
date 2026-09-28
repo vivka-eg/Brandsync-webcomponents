@@ -110,9 +110,13 @@ export class BsDialog {
   // reliably walk into slotted children's own Shadow DOM anyway), redirect any focus that lands
   // outside the dialog back to it. composedPath() correctly reports elements across Shadow DOM
   // boundaries, unlike a plain `.contains()` check.
+  //
+  // isConnected guard: without it, a dialog instance that's been removed from the document (e.g.
+  // a consumer swapping it out for another) but hasn't finished Stencil's disconnect teardown yet
+  // would still redirect page-wide focusin events into its own, no-longer-visible dialog.
   @Listen('focusin', { target: 'document' })
   onFocusIn(ev: FocusEvent) {
-    if (this.open && this.dialogRef && !ev.composedPath().includes(this.dialogRef)) {
+    if (this.open && this.dialogRef?.isConnected && !ev.composedPath().includes(this.dialogRef)) {
       this.dialogRef.focus();
     }
   }
@@ -120,7 +124,13 @@ export class BsDialog {
   componentDidRender() {
     if (this.open && !this.wasOpen) {
       this.previouslyFocused = document.activeElement as HTMLElement;
-      this.dialogRef?.focus();
+      // Deferred to the next frame -- calling .focus() synchronously here, in the same task as
+      // the dialog's shadow tree first connecting, silently fails (confirmed directly: the ref is
+      // valid, connected, and has tabindex="-1" at this exact point, yet the shadow root's
+      // activeElement stays null right after the call). This is a known class of browser quirk --
+      // focusing an element in the same synchronous pass as its own connection doesn't reliably
+      // take effect until the browser's finished the layout/connection work for it.
+      requestAnimationFrame(() => this.dialogRef?.focus());
       // Locks the page behind the dialog from scrolling while it's open -- a fixed-position
       // backdrop/dialog doesn't block scroll on its own, since scroll input still targets whatever
       // element is under the pointer/has focus, not the topmost painted layer.

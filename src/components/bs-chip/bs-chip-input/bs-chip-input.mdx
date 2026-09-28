@@ -1,0 +1,92 @@
+import { Meta, Canvas, Controls } from '@storybook/addon-docs/blocks';
+import * as ChipInputStories from './bs-chip-input.stories';
+
+<Meta of={ChipInputStories} />
+
+# Chip Input
+
+## Table of Contents
+
+- [Overview](#overview)
+- [Selected](#selected)
+- [With icon](#with-icon)
+- [With avatar](#with-avatar)
+- [Disabled](#disabled)
+- [All variants](#all-variants)
+- [Component API](#component-api)
+- [Accessibility](#accessibility)
+
+## Overview
+
+A pill-shaped, removable representation of a discrete piece of user-entered data (e.g. a tag, a
+selected filter value, an invited email address), optionally paired with a leading icon or avatar.
+Unlike `bs-chip-filter`, this is a compound control -- the body toggles `selected`, and a separate
+trailing button removes the chip entirely.
+
+**When to use**
+- Representing one entry in a list the user built themselves (tags, recipients, multi-select
+  values) that they need to be able to remove individually.
+
+**When not to use**
+- A single toggleable filter, with no removal affordance -- use `bs-chip-filter`.
+- A static, non-interactive status/category label -- use `bs-badge`.
+
+<Canvas of={ChipInputStories.Default} />
+
+## Selected
+
+`selected` toggles the chip to its "on" reading -- a dark filled background with inverse (white)
+text. Mutable and reflected, so clicking the body toggles it directly and
+`bs-chip-input[selected]` is a valid CSS selector. Clicking the remove button never affects this.
+
+<Canvas of={ChipInputStories.Selected} />
+
+## With icon
+
+An optional leading icon via the `icon` slot, defaulting to 16px.
+
+<Canvas of={ChipInputStories.WithIcon} />
+
+## With avatar
+
+The same `icon` slot also accepts a `<bs-avatar size="xs">` directly, no extra wiring needed --
+`bs-avatar`'s own default border color already matches Figma's spec for this exact context (both
+resolve to the same token value), so this component doesn't add a second border on top of it.
+
+<Canvas of={ChipInputStories.WithAvatar} />
+
+## Disabled
+
+Disables both the body and the remove button.
+
+<Canvas of={ChipInputStories.Disabled} />
+
+## All variants
+
+<Canvas of={ChipInputStories.AllVariants} />
+
+## Component API
+
+<Controls of={ChipInputStories.Default} />
+
+**Customization surface** (see `CONVENTIONS.md` in the repo root for the full convention):
+- Slots: default (label), `icon` (optional leading icon or `bs-avatar`)
+- Shadow parts: `::part(body)`, `::part(icon)`, `::part(label)`, `::part(remove)`
+- CSS Custom Properties: `--bs-chip-input-height-md`, `--bs-chip-input-height-lg`,
+  `--bs-chip-input-gap`, `--bs-chip-input-padding-x-glyph-side`,
+  `--bs-chip-input-padding-x-plain-side`, `--bs-chip-input-font-size`,
+  `--bs-chip-input-line-height`, `--bs-chip-input-font-weight` -- see `bs-chip-input.css`'s header
+  block for what each aliases to. Color tokens come directly from `brandsync-tokens`' own
+  pre-built `--bs-chip-bg-*`/`--bs-chip-text-*` set, shared across the whole `bs-chip` family.
+
+## Accessibility
+
+- Two separate native `<button>`s inside one shadow root -- `body` (toggles `selected`, exposes
+  `aria-pressed`) and `remove` (removes the chip, `aria-label="Remove {label text}"` computed
+  automatically from the slotted label). Both get real keyboard focus/activation for free.
+- The whole pill's background/focus ring responds to hover/focus/press on *either* inner button --
+  `:focus-within`/`:hover`/`:active` on the host all match whenever the pointer or focus is on any
+  shadow-DOM descendant, not just the host element itself, so there's no dead zone between the two
+  buttons.
+- Uses the native `disabled` attribute on both buttons, so a disabled chip is fully unfocusable and
+  excluded from tab order, same as `bs-button`/`bs-switch`/`bs-chip-filter`.

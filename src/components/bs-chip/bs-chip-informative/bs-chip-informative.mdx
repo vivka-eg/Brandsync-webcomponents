@@ -1,0 +1,92 @@
+import { Meta, Canvas, Controls } from '@storybook/addon-docs/blocks';
+import * as ChipInformativeStories from './bs-chip-informative.stories';
+
+<Meta of={ChipInformativeStories} />
+
+# Chip Informative
+
+## Table of Contents
+
+- [Overview](#overview)
+- [Colors](#colors)
+- [With icon](#with-icon)
+- [Disabled](#disabled)
+- [Sizes](#sizes)
+- [All variants](#all-variants)
+- [Component API](#component-api)
+- [Accessibility](#accessibility)
+
+## Overview
+
+A pill-shaped, non-interactive label for conveying a category or status at a glance, optionally
+paired with a leading icon. Unlike `bs-chip-filter`/`bs-chip-input`, this is purely informational --
+no click/select/remove behavior, no hover/focus/pressed states.
+
+**When to use**
+- Conveying a category or status inline with other content, with more color options and an
+  optional icon than `bs-badge` offers.
+
+**When not to use**
+- Anything clickable/selectable -- use `bs-chip-filter`.
+- A short, fixed status label with no color/icon needs -- `bs-badge` is the simpler choice.
+
+<Canvas of={ChipInformativeStories.Neutral} />
+
+## Colors
+
+Five semantic colors, each mapping directly to `brandsync-tokens`' own `--bs-chip-bg-*-container`/
+`--bs-chip-text-*` pairs.
+
+<Canvas of={ChipInformativeStories.Warning} />
+<Canvas of={ChipInformativeStories.Success} />
+<Canvas of={ChipInformativeStories.Info} />
+<Canvas of={ChipInformativeStories.Error} />
+
+## With icon
+
+An optional leading icon via the `icon` slot.
+
+<Canvas of={ChipInformativeStories.WithIcon} />
+
+## Disabled
+
+Overrides whichever `color` is set with the disabled token set.
+
+<Canvas of={ChipInformativeStories.Disabled} />
+
+## Sizes
+
+Unlike `bs-chip-filter`/`bs-chip-input`, `size="sm"` uses a genuinely smaller font (12px vs. 14px),
+not just a shorter pill.
+
+<Canvas of={ChipInformativeStories.Small} />
+<Canvas of={ChipInformativeStories.Medium} />
+
+## All variants
+
+<Canvas of={ChipInformativeStories.AllVariants} />
+
+## Component API
+
+<Controls of={ChipInformativeStories.Neutral} />
+
+**Customization surface** (see `CONVENTIONS.md` in the repo root for the full convention):
+- Slots: default (label), `icon` (optional leading icon)
+- Shadow parts: `::part(icon)`, `::part(label)`
+- CSS Custom Properties: `--bs-chip-informative-height-sm`, `--bs-chip-informative-height-md`,
+  `--bs-chip-informative-height-lg`, `--bs-chip-informative-gap`,
+  `--bs-chip-informative-icon-size`, `--bs-chip-informative-padding-x-glyph-side`,
+  `--bs-chip-informative-padding-right-icon-variant`, `--bs-chip-informative-padding-x-plain-side`,
+  `--bs-chip-informative-font-size-sm`, `--bs-chip-informative-line-height-sm`,
+  `--bs-chip-informative-font-size`, `--bs-chip-informative-line-height`,
+  `--bs-chip-informative-font-weight` -- see `bs-chip-informative.css`'s header block for what each
+  aliases to. Color tokens come directly from `brandsync-tokens`' own pre-built
+  `--bs-chip-bg-*`/`--bs-chip-text-*` set, shared across the whole `bs-chip` family.
+
+## Accessibility
+
+- Renders as a plain `<span>` (via `Host`) -- purely informational, not an interactive element, so
+  it needs no keyboard handling or ARIA role by default, same reasoning as `bs-badge`.
+- If this chip communicates a status change that should be announced live, wrap it with
+  `aria-live="polite"` at the point where it's used -- this component doesn't add that itself,
+  since not every usage is dynamic.

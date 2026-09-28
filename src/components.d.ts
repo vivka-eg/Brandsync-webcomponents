@@ -16,6 +16,9 @@ import { BsButtonSize as BsButtonSize1 } from "./components/bs-button/bs-button/
 import { BsCardSurface } from "./components/bs-card/bs-card";
 import { BsCheckboxSize } from "./components/bs-checkbox/bs-checkbox";
 import { BsCheckboxSize as BsCheckboxSize1 } from "./components/bs-checkbox/bs-checkbox";
+import { BsChipFilterSize } from "./components/bs-chip/bs-chip-filter/bs-chip-filter";
+import { BsChipInformativeColor, BsChipInformativeSize } from "./components/bs-chip/bs-chip-informative/bs-chip-informative";
+import { BsChipInputSize } from "./components/bs-chip/bs-chip-input/bs-chip-input";
 import { BsComposerState, BsComposerVariant } from "./components/bs-composer/bs-composer";
 import { BsComposerStatusBannerType } from "./components/bs-composer-status-banner/bs-composer-status-banner";
 import { BsDataTableColumn, BsDataTableRow } from "./components/bs-data-table/bs-data-table";
@@ -41,6 +44,9 @@ export { BsButtonSize as BsButtonSize1 } from "./components/bs-button/bs-button/
 export { BsCardSurface } from "./components/bs-card/bs-card";
 export { BsCheckboxSize } from "./components/bs-checkbox/bs-checkbox";
 export { BsCheckboxSize as BsCheckboxSize1 } from "./components/bs-checkbox/bs-checkbox";
+export { BsChipFilterSize } from "./components/bs-chip/bs-chip-filter/bs-chip-filter";
+export { BsChipInformativeColor, BsChipInformativeSize } from "./components/bs-chip/bs-chip-informative/bs-chip-informative";
+export { BsChipInputSize } from "./components/bs-chip/bs-chip-input/bs-chip-input";
 export { BsComposerState, BsComposerVariant } from "./components/bs-composer/bs-composer";
 export { BsComposerStatusBannerType } from "./components/bs-composer-status-banner/bs-composer-status-banner";
 export { BsDataTableColumn, BsDataTableRow } from "./components/bs-data-table/bs-data-table";
@@ -778,6 +784,102 @@ export namespace Components {
           * @default 'lg'
          */
         "size": BsCheckboxSize1;
+    }
+    /**
+     * A pill-shaped, selectable toggle used to filter a list or dataset (e.g. a "Filter chip" row
+     * above a table or search results), optionally paired with a leading icon and/or a dropdown caret
+     * that signals it opens a menu of further options.
+     * ## When to use
+     * - Letting a user toggle a filter on/off, or open a menu of filter options (pair `dropdown` with
+     *   your own `bs-menu` -- this component only renders the caret affordance, it doesn't manage a
+     *   menu itself).
+     * ## When not to use
+     * - A static, non-interactive status/category label -- use `bs-badge` instead.
+     * - A single primary action -- use `bs-button`.
+     */
+    interface BsChipFilter {
+        /**
+          * Accessible name override. The visible label (default slot) already gives the native button an accessible name, so this is only needed if that text isn't sufficient on its own (e.g. it doesn't convey that activating the chip toggles a filter).
+          * @default null
+         */
+        "ariaLabel": string | null;
+        /**
+          * Disables the chip: sets the native `disabled` attribute, suppresses hover/focus/pressed styling, and prevents toggling.
+          * @default false
+         */
+        "disabled": boolean;
+        /**
+          * Shows a trailing dropdown caret, signaling this chip opens a menu of further options. Purely a visual affordance -- wire up the actual menu (e.g. `bs-menu`) yourself.
+          * @default false
+         */
+        "dropdown": boolean;
+        /**
+          * Whether the chip reads as toggled on. Mutable so clicking it toggles directly, and reflected so consumers can target `bs-chip-filter[selected]` via CSS.
+          * @default false
+         */
+        "selected": boolean;
+        /**
+          * Sizing scale. Controls the chip's height only -- icon size, gap, and font size stay constant across sizes, matching the Figma spec exactly.
+          * @default 'lg'
+         */
+        "size": BsChipFilterSize;
+    }
+    /**
+     * A pill-shaped, non-interactive label for conveying a category or status at a glance, optionally
+     * paired with a leading icon. Unlike `bs-chip-filter`/`bs-chip-input`, this is purely informational
+     * -- no click/select/remove behavior, no hover/focus/pressed states.
+     * ## When to use
+     * - Conveying a category or status inline with other content, with more color options and an
+     *   optional icon than `bs-badge` offers.
+     * ## When not to use
+     * - Anything clickable/selectable -- use `bs-chip-filter`.
+     * - A short, fixed status label with no color/icon needs -- `bs-badge` is the simpler choice.
+     */
+    interface BsChipInformative {
+        /**
+          * Semantic color. Maps directly to the brandsync-tokens `--bs-chip-bg-*-container`/ `--bs-chip-text-*` sets. Ignored (in favor of the disabled token set) when `disabled` is set -- same override relationship `bs-stepper-step`'s `error`/`disabled` props have.
+          * @default 'neutral'
+         */
+        "color": BsChipInformativeColor;
+        /**
+          * Overrides `color` with the disabled token set, regardless of its value. Reflected so `:host([disabled])` can apply it in CSS.
+          * @default false
+         */
+        "disabled": boolean;
+        /**
+          * Sizing scale. Controls height and font-size/line-height together -- unlike `bs-chip-filter`/`bs-chip-input`, Figma specs a distinct (smaller) font at `size="sm"`, not just a shorter pill.
+          * @default 'lg'
+         */
+        "size": BsChipInformativeSize;
+    }
+    /**
+     * A pill-shaped, removable representation of a discrete piece of user-entered data (e.g. a tag,
+     * a selected filter value, an invited email address), optionally paired with a leading icon or
+     * avatar. Unlike `bs-chip-filter`, this is a compound control -- the body toggles `selected`, and
+     * a separate trailing button removes the chip entirely.
+     * ## When to use
+     * - Representing one entry in a list the user built themselves (tags, recipients, multi-select
+     *   values) that they need to be able to remove individually.
+     * ## When not to use
+     * - A single toggleable filter, with no removal affordance -- use `bs-chip-filter`.
+     * - A static, non-interactive status/category label -- use `bs-badge`.
+     */
+    interface BsChipInput {
+        /**
+          * Disables both the body and the remove button, and reflected so `:host([disabled])` can apply the disabled token set (a plain CSS pseudo-class can't target the host itself here, since :host isn't a native form control).
+          * @default false
+         */
+        "disabled": boolean;
+        /**
+          * Whether the chip reads as toggled on. Mutable so clicking the body toggles directly, and reflected so consumers can target `bs-chip-input[selected]` via CSS.
+          * @default false
+         */
+        "selected": boolean;
+        /**
+          * Sizing scale. Controls the chip's height only -- icon size, gap, and font size stay constant across sizes, matching the Figma spec exactly.
+          * @default 'lg'
+         */
+        "size": BsChipInputSize;
     }
     /**
      * A chat composer input for Genie AI-style conversational interfaces: a text field
@@ -1942,6 +2044,14 @@ export interface BsCheckboxCustomEvent<T> extends CustomEvent<T> {
     detail: T;
     target: HTMLBsCheckboxElement;
 }
+export interface BsChipFilterCustomEvent<T> extends CustomEvent<T> {
+    detail: T;
+    target: HTMLBsChipFilterElement;
+}
+export interface BsChipInputCustomEvent<T> extends CustomEvent<T> {
+    detail: T;
+    target: HTMLBsChipInputElement;
+}
 export interface BsComposerCustomEvent<T> extends CustomEvent<T> {
     detail: T;
     target: HTMLBsComposerElement;
@@ -2645,6 +2755,82 @@ declare global {
     var HTMLBsCheckboxSkeletonElement: {
         prototype: HTMLBsCheckboxSkeletonElement;
         new (): HTMLBsCheckboxSkeletonElement;
+    };
+    interface HTMLBsChipFilterElementEventMap {
+        "bsChange": boolean;
+    }
+    /**
+     * A pill-shaped, selectable toggle used to filter a list or dataset (e.g. a "Filter chip" row
+     * above a table or search results), optionally paired with a leading icon and/or a dropdown caret
+     * that signals it opens a menu of further options.
+     * ## When to use
+     * - Letting a user toggle a filter on/off, or open a menu of filter options (pair `dropdown` with
+     *   your own `bs-menu` -- this component only renders the caret affordance, it doesn't manage a
+     *   menu itself).
+     * ## When not to use
+     * - A static, non-interactive status/category label -- use `bs-badge` instead.
+     * - A single primary action -- use `bs-button`.
+     */
+    interface HTMLBsChipFilterElement extends Components.BsChipFilter, HTMLStencilElement {
+        addEventListener<K extends keyof HTMLBsChipFilterElementEventMap>(type: K, listener: (this: HTMLBsChipFilterElement, ev: BsChipFilterCustomEvent<HTMLBsChipFilterElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLBsChipFilterElementEventMap>(type: K, listener: (this: HTMLBsChipFilterElement, ev: BsChipFilterCustomEvent<HTMLBsChipFilterElementEventMap[K]>) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
+    }
+    var HTMLBsChipFilterElement: {
+        prototype: HTMLBsChipFilterElement;
+        new (): HTMLBsChipFilterElement;
+    };
+    /**
+     * A pill-shaped, non-interactive label for conveying a category or status at a glance, optionally
+     * paired with a leading icon. Unlike `bs-chip-filter`/`bs-chip-input`, this is purely informational
+     * -- no click/select/remove behavior, no hover/focus/pressed states.
+     * ## When to use
+     * - Conveying a category or status inline with other content, with more color options and an
+     *   optional icon than `bs-badge` offers.
+     * ## When not to use
+     * - Anything clickable/selectable -- use `bs-chip-filter`.
+     * - A short, fixed status label with no color/icon needs -- `bs-badge` is the simpler choice.
+     */
+    interface HTMLBsChipInformativeElement extends Components.BsChipInformative, HTMLStencilElement {
+    }
+    var HTMLBsChipInformativeElement: {
+        prototype: HTMLBsChipInformativeElement;
+        new (): HTMLBsChipInformativeElement;
+    };
+    interface HTMLBsChipInputElementEventMap {
+        "bsChange": boolean;
+        "bsRemove": void;
+    }
+    /**
+     * A pill-shaped, removable representation of a discrete piece of user-entered data (e.g. a tag,
+     * a selected filter value, an invited email address), optionally paired with a leading icon or
+     * avatar. Unlike `bs-chip-filter`, this is a compound control -- the body toggles `selected`, and
+     * a separate trailing button removes the chip entirely.
+     * ## When to use
+     * - Representing one entry in a list the user built themselves (tags, recipients, multi-select
+     *   values) that they need to be able to remove individually.
+     * ## When not to use
+     * - A single toggleable filter, with no removal affordance -- use `bs-chip-filter`.
+     * - A static, non-interactive status/category label -- use `bs-badge`.
+     */
+    interface HTMLBsChipInputElement extends Components.BsChipInput, HTMLStencilElement {
+        addEventListener<K extends keyof HTMLBsChipInputElementEventMap>(type: K, listener: (this: HTMLBsChipInputElement, ev: BsChipInputCustomEvent<HTMLBsChipInputElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLBsChipInputElementEventMap>(type: K, listener: (this: HTMLBsChipInputElement, ev: BsChipInputCustomEvent<HTMLBsChipInputElementEventMap[K]>) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
+    }
+    var HTMLBsChipInputElement: {
+        prototype: HTMLBsChipInputElement;
+        new (): HTMLBsChipInputElement;
     };
     interface HTMLBsComposerElementEventMap {
         "bsInput": string;
@@ -3520,6 +3706,9 @@ declare global {
         "bs-chatbot-suggestion-button": HTMLBsChatbotSuggestionButtonElement;
         "bs-checkbox": HTMLBsCheckboxElement;
         "bs-checkbox-skeleton": HTMLBsCheckboxSkeletonElement;
+        "bs-chip-filter": HTMLBsChipFilterElement;
+        "bs-chip-informative": HTMLBsChipInformativeElement;
+        "bs-chip-input": HTMLBsChipInputElement;
         "bs-composer": HTMLBsComposerElement;
         "bs-composer-status-banner": HTMLBsComposerStatusBannerElement;
         "bs-data-table": HTMLBsDataTableElement;
@@ -4345,6 +4534,114 @@ declare namespace LocalJSX {
           * @default 'lg'
          */
         "size"?: BsCheckboxSize1;
+    }
+    /**
+     * A pill-shaped, selectable toggle used to filter a list or dataset (e.g. a "Filter chip" row
+     * above a table or search results), optionally paired with a leading icon and/or a dropdown caret
+     * that signals it opens a menu of further options.
+     * ## When to use
+     * - Letting a user toggle a filter on/off, or open a menu of filter options (pair `dropdown` with
+     *   your own `bs-menu` -- this component only renders the caret affordance, it doesn't manage a
+     *   menu itself).
+     * ## When not to use
+     * - A static, non-interactive status/category label -- use `bs-badge` instead.
+     * - A single primary action -- use `bs-button`.
+     */
+    interface BsChipFilter {
+        /**
+          * Accessible name override. The visible label (default slot) already gives the native button an accessible name, so this is only needed if that text isn't sufficient on its own (e.g. it doesn't convey that activating the chip toggles a filter).
+          * @default null
+         */
+        "ariaLabel"?: string | null;
+        /**
+          * Disables the chip: sets the native `disabled` attribute, suppresses hover/focus/pressed styling, and prevents toggling.
+          * @default false
+         */
+        "disabled"?: boolean;
+        /**
+          * Shows a trailing dropdown caret, signaling this chip opens a menu of further options. Purely a visual affordance -- wire up the actual menu (e.g. `bs-menu`) yourself.
+          * @default false
+         */
+        "dropdown"?: boolean;
+        /**
+          * Emitted when `selected` changes via user interaction, with the new value.
+         */
+        "onBsChange"?: (event: BsChipFilterCustomEvent<boolean>) => void;
+        /**
+          * Whether the chip reads as toggled on. Mutable so clicking it toggles directly, and reflected so consumers can target `bs-chip-filter[selected]` via CSS.
+          * @default false
+         */
+        "selected"?: boolean;
+        /**
+          * Sizing scale. Controls the chip's height only -- icon size, gap, and font size stay constant across sizes, matching the Figma spec exactly.
+          * @default 'lg'
+         */
+        "size"?: BsChipFilterSize;
+    }
+    /**
+     * A pill-shaped, non-interactive label for conveying a category or status at a glance, optionally
+     * paired with a leading icon. Unlike `bs-chip-filter`/`bs-chip-input`, this is purely informational
+     * -- no click/select/remove behavior, no hover/focus/pressed states.
+     * ## When to use
+     * - Conveying a category or status inline with other content, with more color options and an
+     *   optional icon than `bs-badge` offers.
+     * ## When not to use
+     * - Anything clickable/selectable -- use `bs-chip-filter`.
+     * - A short, fixed status label with no color/icon needs -- `bs-badge` is the simpler choice.
+     */
+    interface BsChipInformative {
+        /**
+          * Semantic color. Maps directly to the brandsync-tokens `--bs-chip-bg-*-container`/ `--bs-chip-text-*` sets. Ignored (in favor of the disabled token set) when `disabled` is set -- same override relationship `bs-stepper-step`'s `error`/`disabled` props have.
+          * @default 'neutral'
+         */
+        "color"?: BsChipInformativeColor;
+        /**
+          * Overrides `color` with the disabled token set, regardless of its value. Reflected so `:host([disabled])` can apply it in CSS.
+          * @default false
+         */
+        "disabled"?: boolean;
+        /**
+          * Sizing scale. Controls height and font-size/line-height together -- unlike `bs-chip-filter`/`bs-chip-input`, Figma specs a distinct (smaller) font at `size="sm"`, not just a shorter pill.
+          * @default 'lg'
+         */
+        "size"?: BsChipInformativeSize;
+    }
+    /**
+     * A pill-shaped, removable representation of a discrete piece of user-entered data (e.g. a tag,
+     * a selected filter value, an invited email address), optionally paired with a leading icon or
+     * avatar. Unlike `bs-chip-filter`, this is a compound control -- the body toggles `selected`, and
+     * a separate trailing button removes the chip entirely.
+     * ## When to use
+     * - Representing one entry in a list the user built themselves (tags, recipients, multi-select
+     *   values) that they need to be able to remove individually.
+     * ## When not to use
+     * - A single toggleable filter, with no removal affordance -- use `bs-chip-filter`.
+     * - A static, non-interactive status/category label -- use `bs-badge`.
+     */
+    interface BsChipInput {
+        /**
+          * Disables both the body and the remove button, and reflected so `:host([disabled])` can apply the disabled token set (a plain CSS pseudo-class can't target the host itself here, since :host isn't a native form control).
+          * @default false
+         */
+        "disabled"?: boolean;
+        /**
+          * Emitted when `selected` changes via clicking the body, with the new value.
+         */
+        "onBsChange"?: (event: BsChipInputCustomEvent<boolean>) => void;
+        /**
+          * Emitted when the remove button is clicked. No payload -- unlike bs-input's own chip-entry mode (which tracks a `chips: string[]` array internally and can identify which string was removed), a standalone chip doesn't know its own "value" to a consumer; whatever's rendering a list of these already has that context via closure/key.
+         */
+        "onBsRemove"?: (event: BsChipInputCustomEvent<void>) => void;
+        /**
+          * Whether the chip reads as toggled on. Mutable so clicking the body toggles directly, and reflected so consumers can target `bs-chip-input[selected]` via CSS.
+          * @default false
+         */
+        "selected"?: boolean;
+        /**
+          * Sizing scale. Controls the chip's height only -- icon size, gap, and font size stay constant across sizes, matching the Figma spec exactly.
+          * @default 'lg'
+         */
+        "size"?: BsChipInputSize;
     }
     /**
      * A chat composer input for Genie AI-style conversational interfaces: a text field
@@ -5687,6 +5984,23 @@ declare namespace LocalJSX {
     interface BsCheckboxSkeletonAttributes {
         "size": BsCheckboxSize;
     }
+    interface BsChipFilterAttributes {
+        "size": BsChipFilterSize;
+        "selected": boolean;
+        "dropdown": boolean;
+        "disabled": boolean;
+        "ariaLabel": string | null;
+    }
+    interface BsChipInformativeAttributes {
+        "color": BsChipInformativeColor;
+        "size": BsChipInformativeSize;
+        "disabled": boolean;
+    }
+    interface BsChipInputAttributes {
+        "size": BsChipInputSize;
+        "selected": boolean;
+        "disabled": boolean;
+    }
     interface BsComposerAttributes {
         "variant": BsComposerVariant;
         "placeholder": string;
@@ -5880,6 +6194,9 @@ declare namespace LocalJSX {
         "bs-chatbot-suggestion-button": Omit<BsChatbotSuggestionButton, keyof BsChatbotSuggestionButtonAttributes> & { [K in keyof BsChatbotSuggestionButton & keyof BsChatbotSuggestionButtonAttributes]?: BsChatbotSuggestionButton[K] } & { [K in keyof BsChatbotSuggestionButton & keyof BsChatbotSuggestionButtonAttributes as `attr:${K}`]?: BsChatbotSuggestionButtonAttributes[K] } & { [K in keyof BsChatbotSuggestionButton & keyof BsChatbotSuggestionButtonAttributes as `prop:${K}`]?: BsChatbotSuggestionButton[K] };
         "bs-checkbox": Omit<BsCheckbox, keyof BsCheckboxAttributes> & { [K in keyof BsCheckbox & keyof BsCheckboxAttributes]?: BsCheckbox[K] } & { [K in keyof BsCheckbox & keyof BsCheckboxAttributes as `attr:${K}`]?: BsCheckboxAttributes[K] } & { [K in keyof BsCheckbox & keyof BsCheckboxAttributes as `prop:${K}`]?: BsCheckbox[K] };
         "bs-checkbox-skeleton": Omit<BsCheckboxSkeleton, keyof BsCheckboxSkeletonAttributes> & { [K in keyof BsCheckboxSkeleton & keyof BsCheckboxSkeletonAttributes]?: BsCheckboxSkeleton[K] } & { [K in keyof BsCheckboxSkeleton & keyof BsCheckboxSkeletonAttributes as `attr:${K}`]?: BsCheckboxSkeletonAttributes[K] } & { [K in keyof BsCheckboxSkeleton & keyof BsCheckboxSkeletonAttributes as `prop:${K}`]?: BsCheckboxSkeleton[K] };
+        "bs-chip-filter": Omit<BsChipFilter, keyof BsChipFilterAttributes> & { [K in keyof BsChipFilter & keyof BsChipFilterAttributes]?: BsChipFilter[K] } & { [K in keyof BsChipFilter & keyof BsChipFilterAttributes as `attr:${K}`]?: BsChipFilterAttributes[K] } & { [K in keyof BsChipFilter & keyof BsChipFilterAttributes as `prop:${K}`]?: BsChipFilter[K] };
+        "bs-chip-informative": Omit<BsChipInformative, keyof BsChipInformativeAttributes> & { [K in keyof BsChipInformative & keyof BsChipInformativeAttributes]?: BsChipInformative[K] } & { [K in keyof BsChipInformative & keyof BsChipInformativeAttributes as `attr:${K}`]?: BsChipInformativeAttributes[K] } & { [K in keyof BsChipInformative & keyof BsChipInformativeAttributes as `prop:${K}`]?: BsChipInformative[K] };
+        "bs-chip-input": Omit<BsChipInput, keyof BsChipInputAttributes> & { [K in keyof BsChipInput & keyof BsChipInputAttributes]?: BsChipInput[K] } & { [K in keyof BsChipInput & keyof BsChipInputAttributes as `attr:${K}`]?: BsChipInputAttributes[K] } & { [K in keyof BsChipInput & keyof BsChipInputAttributes as `prop:${K}`]?: BsChipInput[K] };
         "bs-composer": Omit<BsComposer, keyof BsComposerAttributes> & { [K in keyof BsComposer & keyof BsComposerAttributes]?: BsComposer[K] } & { [K in keyof BsComposer & keyof BsComposerAttributes as `attr:${K}`]?: BsComposerAttributes[K] } & { [K in keyof BsComposer & keyof BsComposerAttributes as `prop:${K}`]?: BsComposer[K] };
         "bs-composer-status-banner": Omit<BsComposerStatusBanner, keyof BsComposerStatusBannerAttributes> & { [K in keyof BsComposerStatusBanner & keyof BsComposerStatusBannerAttributes]?: BsComposerStatusBanner[K] } & { [K in keyof BsComposerStatusBanner & keyof BsComposerStatusBannerAttributes as `attr:${K}`]?: BsComposerStatusBannerAttributes[K] } & { [K in keyof BsComposerStatusBanner & keyof BsComposerStatusBannerAttributes as `prop:${K}`]?: BsComposerStatusBanner[K] };
         "bs-data-table": Omit<BsDataTable, keyof BsDataTableAttributes> & { [K in keyof BsDataTable & keyof BsDataTableAttributes]?: BsDataTable[K] } & { [K in keyof BsDataTable & keyof BsDataTableAttributes as `attr:${K}`]?: BsDataTableAttributes[K] } & { [K in keyof BsDataTable & keyof BsDataTableAttributes as `prop:${K}`]?: BsDataTable[K] };
@@ -6360,6 +6677,44 @@ declare module "@stencil/core" {
              * `96px`.
              */
             "bs-checkbox-skeleton": LocalJSX.IntrinsicElements["bs-checkbox-skeleton"] & JSXBase.HTMLAttributes<HTMLBsCheckboxSkeletonElement>;
+            /**
+             * A pill-shaped, selectable toggle used to filter a list or dataset (e.g. a "Filter chip" row
+             * above a table or search results), optionally paired with a leading icon and/or a dropdown caret
+             * that signals it opens a menu of further options.
+             * ## When to use
+             * - Letting a user toggle a filter on/off, or open a menu of filter options (pair `dropdown` with
+             *   your own `bs-menu` -- this component only renders the caret affordance, it doesn't manage a
+             *   menu itself).
+             * ## When not to use
+             * - A static, non-interactive status/category label -- use `bs-badge` instead.
+             * - A single primary action -- use `bs-button`.
+             */
+            "bs-chip-filter": LocalJSX.IntrinsicElements["bs-chip-filter"] & JSXBase.HTMLAttributes<HTMLBsChipFilterElement>;
+            /**
+             * A pill-shaped, non-interactive label for conveying a category or status at a glance, optionally
+             * paired with a leading icon. Unlike `bs-chip-filter`/`bs-chip-input`, this is purely informational
+             * -- no click/select/remove behavior, no hover/focus/pressed states.
+             * ## When to use
+             * - Conveying a category or status inline with other content, with more color options and an
+             *   optional icon than `bs-badge` offers.
+             * ## When not to use
+             * - Anything clickable/selectable -- use `bs-chip-filter`.
+             * - A short, fixed status label with no color/icon needs -- `bs-badge` is the simpler choice.
+             */
+            "bs-chip-informative": LocalJSX.IntrinsicElements["bs-chip-informative"] & JSXBase.HTMLAttributes<HTMLBsChipInformativeElement>;
+            /**
+             * A pill-shaped, removable representation of a discrete piece of user-entered data (e.g. a tag,
+             * a selected filter value, an invited email address), optionally paired with a leading icon or
+             * avatar. Unlike `bs-chip-filter`, this is a compound control -- the body toggles `selected`, and
+             * a separate trailing button removes the chip entirely.
+             * ## When to use
+             * - Representing one entry in a list the user built themselves (tags, recipients, multi-select
+             *   values) that they need to be able to remove individually.
+             * ## When not to use
+             * - A single toggleable filter, with no removal affordance -- use `bs-chip-filter`.
+             * - A static, non-interactive status/category label -- use `bs-badge`.
+             */
+            "bs-chip-input": LocalJSX.IntrinsicElements["bs-chip-input"] & JSXBase.HTMLAttributes<HTMLBsChipInputElement>;
             /**
              * A chat composer input for Genie AI-style conversational interfaces: a text field
              * plus an attach button, a mic/voice-recording toggle, and a single primary action button whose

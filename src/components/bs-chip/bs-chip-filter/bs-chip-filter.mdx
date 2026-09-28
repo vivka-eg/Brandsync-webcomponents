@@ -1,0 +1,91 @@
+import { Meta, Canvas, Controls } from '@storybook/addon-docs/blocks';
+import * as ChipFilterStories from './bs-chip-filter.stories';
+
+<Meta of={ChipFilterStories} />
+
+# Chip
+
+## Table of Contents
+
+- [Overview](#overview)
+- [Selected](#selected)
+- [With dropdown caret](#with-dropdown-caret)
+- [With icon](#with-icon)
+- [Disabled](#disabled)
+- [All variants](#all-variants)
+- [Component API](#component-api)
+- [Accessibility](#accessibility)
+
+## Overview
+
+A pill-shaped, selectable toggle used to filter a list or dataset (e.g. a "Filter chip" row above
+a table or search results), optionally paired with a leading icon and/or a dropdown caret that
+signals it opens a menu of further options.
+
+**When to use**
+- Letting a user toggle a filter on/off, or open a menu of filter options (pair `dropdown` with
+  your own `bs-menu` — this component only renders the caret affordance, it doesn't manage a menu
+  itself).
+
+**When not to use**
+- A static, non-interactive status/category label — use `bs-badge` instead.
+- A single primary action — use `bs-button`.
+
+<Canvas of={ChipFilterStories.Default} />
+
+## Selected
+
+`selected` toggles the chip to its "on" reading — a dark filled background with inverse (white)
+text, instead of the default light container background with dark text. Mutable and reflected, so
+clicking the chip toggles it directly and `bs-chip-filter[selected]` is a valid CSS selector.
+
+<Canvas of={ChipFilterStories.Selected} />
+
+## With dropdown caret
+
+`dropdown` adds a trailing caret, signaling the chip opens a menu of further options. This is a
+purely visual affordance — this component doesn't manage a menu itself, pair it with `bs-menu` (or
+similar) at the call site.
+
+<Canvas of={ChipFilterStories.WithDropdown} />
+
+## With icon
+
+An optional leading icon via the `icon` slot.
+
+<Canvas of={ChipFilterStories.WithIcon} />
+<Canvas of={ChipFilterStories.WithIconAndDropdown} />
+
+## Disabled
+
+<Canvas of={ChipFilterStories.Disabled} />
+
+## All variants
+
+<Canvas of={ChipFilterStories.AllVariants} />
+
+## Component API
+
+<Controls of={ChipFilterStories.Default} />
+
+**Customization surface** (see `CONVENTIONS.md` in the repo root for the full convention):
+- Slots: default (label), `icon` (optional leading icon)
+- Shadow parts: `::part(icon)`, `::part(label)`, `::part(caret)`
+- CSS Custom Properties: `--bs-chip-filter-height-md`, `--bs-chip-filter-height-lg`, `--bs-chip-filter-gap`,
+  `--bs-chip-filter-icon-size`, `--bs-chip-filter-padding-x-glyph-side`, `--bs-chip-filter-padding-x-plain-side`,
+  `--bs-chip-filter-padding-x-text-only`, `--bs-chip-filter-font-size`, `--bs-chip-filter-line-height`,
+  `--bs-chip-filter-font-weight` — see `bs-chip-filter.css`'s header block for what each aliases to. Color
+  tokens (background/text per selected/hover/focus/pressed/disabled state) come directly from
+  `brandsync-tokens`' own pre-built `--bs-chip-bg-*`/`--bs-chip-text-*` set, not a local alias
+  layer — this component consumes those globals directly, the same way `bs-badge` does.
+
+## Accessibility
+
+- Renders as a native `<button>` with `aria-pressed` reflecting `selected` — the correct ARIA
+  pattern for a toggle button, not a plain button or a checkbox role.
+- `ariaLabel` overrides the accessible name when the visible label text alone doesn't convey that
+  activating the chip toggles a filter.
+- The dropdown caret is `aria-hidden` — purely a visual signal that the icon slot and label
+  already don't otherwise communicate.
+- Uses the native `disabled` attribute, so disabled chips are unfocusable and excluded from tab
+  order automatically, same as `bs-button`/`bs-switch`.

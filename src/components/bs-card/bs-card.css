@@ -11,6 +11,12 @@
   overflow: hidden;
   border-radius: var(--bs-border-radius-100);
   font-family: inherit;
+  /* No color rule existed anywhere in this file before this -- slotted header/body/footer content
+     inherited whatever color the *consuming page* happened to have, not this card's own themed
+     token, so it stayed browser-default black even against a dark surface in dark mode (confirmed
+     via a real computed-style check: rgb(0, 0, 0) regardless of theme). Same bug, same fix, as
+     bs-dialog's own identical color rule on .bs-dialog__dialog. */
+  color: var(--bs-text-default);
 }
 
 .bs-card--base {

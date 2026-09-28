@@ -3,6 +3,12 @@ import { render, h, describe, it, expect, afterEach } from '@stencil/vitest';
 describe('bs-dialog', () => {
   afterEach(() => {
     document.querySelectorAll('button[data-test-trigger]').forEach(el => el.remove());
+    // render() doesn't unmount the previous test's element on its own -- without this, a dialog
+    // left open by one test stays connected (and its document-level focusin listener stays live)
+    // into the next test, silently stealing focus meant for that test's own elements. Confirmed
+    // directly: a later test's plain `<button>.focus()` call was losing focus to a completely
+    // unrelated *previous* test's still-open `<bs-dialog>`.
+    document.querySelectorAll('bs-dialog').forEach(el => el.remove());
   });
 
   it('renders nothing when closed (default)', async () => {

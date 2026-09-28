@@ -1,0 +1,156 @@
+/**
+ * @prop --bs-chip-filter-height-md: Height at size="md". Aliased to --bs-spacing-300.
+ * @prop --bs-chip-filter-height-lg: Height at size="lg". Aliased to --bs-spacing-400.
+ * @prop --bs-chip-filter-gap: Gap between icon/label/caret. Aliased to --bs-spacing-50.
+ * @prop --bs-chip-filter-icon-size: Icon/caret glyph size. 16px, matching Figma exactly --
+ * constant across both sizes, only the chip's own height changes.
+ * @prop --bs-chip-filter-padding-x-glyph-side: Horizontal padding on an edge adjacent to the icon
+ * or the caret. Aliased to --bs-spacing-100.
+ * @prop --bs-chip-filter-padding-x-plain-side: Horizontal padding on a label-only edge, when the
+ * opposite edge has a glyph. Aliased to --bs-spacing-150.
+ * @prop --bs-chip-filter-padding-x-text-only: Horizontal padding on both edges, when neither has
+ * a glyph. Aliased to --bs-spacing-200 -- deliberately not the same as
+ * --bs-chip-filter-padding-x-plain-side; verified against Figma that a plain-text chip (no icon,
+ * no dropdown) uses a bigger value on both sides rather than the smaller one-sided compensating
+ * value used when only one edge lacks a glyph.
+ * @prop --bs-chip-filter-font-size: Aliased to --bs-font-size-sm.
+ * @prop --bs-chip-filter-line-height: Aliased to --bs-line-height-body-sm.
+ * @prop --bs-chip-filter-font-weight: Aliased to --bs-font-weight-regular.
+ *
+ * Color (background/text per selected/hover/focus/pressed/disabled state) comes directly from
+ * brandsync-tokens' own pre-built chip token set (--bs-chip-bg-..., --bs-chip-text-...,
+ * --bs-chip-border-...) below -- those are shared across the whole bs-chip family, not local to
+ * this component, so they're consumed directly rather than re-aliased under a
+ * bs-chip-filter-specific name.
+ */
+:host {
+  display: inline-flex;
+
+  --bs-chip-filter-height-md: var(--bs-spacing-300);
+  --bs-chip-filter-height-lg: var(--bs-spacing-400);
+  --bs-chip-filter-gap: var(--bs-spacing-50);
+  --bs-chip-filter-icon-size: 16px;
+  --bs-chip-filter-padding-x-glyph-side: var(--bs-spacing-100);
+  --bs-chip-filter-padding-x-plain-side: var(--bs-spacing-150);
+  --bs-chip-filter-padding-x-text-only: var(--bs-spacing-200);
+  --bs-chip-filter-font-size: var(--bs-font-size-sm);
+  --bs-chip-filter-line-height: var(--bs-line-height-body-sm);
+  --bs-chip-filter-font-weight: var(--bs-font-weight-regular);
+}
+
+.bs-chip-filter {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--bs-chip-filter-gap);
+  box-sizing: border-box;
+  border: none;
+  border-radius: var(--bs-border-radius-full);
+  font-family: inherit;
+  font-size: var(--bs-chip-filter-font-size);
+  font-weight: var(--bs-chip-filter-font-weight);
+  line-height: calc(var(--bs-chip-filter-line-height) * 1px);
+  white-space: nowrap;
+  cursor: pointer;
+  background: var(--bs-chip-bg-primary-container);
+  color: var(--bs-chip-text-primary);
+  transition: background-color var(--bs-duration-fast, 120ms) var(--bs-easing-standard, ease);
+}
+
+.bs-chip-filter--md {
+  height: var(--bs-chip-filter-height-md);
+}
+
+.bs-chip-filter--lg {
+  height: var(--bs-chip-filter-height-lg);
+}
+
+.bs-chip-filter--icon-dropdown {
+  padding: 0 var(--bs-chip-filter-padding-x-glyph-side);
+}
+
+.bs-chip-filter--icon-only {
+  padding-left: var(--bs-chip-filter-padding-x-glyph-side);
+  padding-right: var(--bs-chip-filter-padding-x-plain-side);
+}
+
+.bs-chip-filter--dropdown-only {
+  padding-left: var(--bs-chip-filter-padding-x-plain-side);
+  padding-right: var(--bs-chip-filter-padding-x-glyph-side);
+}
+
+.bs-chip-filter--text-only {
+  padding: 0 var(--bs-chip-filter-padding-x-text-only);
+}
+
+.bs-chip-filter__icon {
+  display: none;
+  flex-shrink: 0;
+  width: var(--bs-chip-filter-icon-size);
+  height: var(--bs-chip-filter-icon-size);
+}
+
+.bs-chip-filter__icon--visible {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.bs-chip-filter__icon ::slotted(*) {
+  display: block;
+  width: var(--bs-chip-filter-icon-size);
+  height: var(--bs-chip-filter-icon-size);
+}
+
+.bs-chip-filter__label {
+  display: flex;
+  align-items: center;
+}
+
+.bs-chip-filter__caret {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  width: var(--bs-chip-filter-icon-size);
+  height: var(--bs-chip-filter-icon-size);
+}
+
+/* Unselected (default): the light "container" background set. */
+.bs-chip-filter:hover:not(:disabled) {
+  background: var(--bs-chip-bg-primary-container-hover);
+}
+
+.bs-chip-filter:active:not(:disabled) {
+  background: var(--bs-chip-bg-primary-container-pressed);
+}
+
+.bs-chip-filter:focus-visible {
+  background: var(--bs-chip-bg-primary-container-focused);
+  outline: 2px solid var(--bs-chip-border-focus);
+  outline-offset: 2px;
+}
+
+/* Selected: the dark "primary" background set, inverse (white) text -- swaps every state above
+   to its --primary-* (not --primary-container-*) counterpart. */
+.bs-chip-filter--selected {
+  background: var(--bs-chip-bg-primary);
+  color: var(--bs-chip-text-inverse);
+}
+
+.bs-chip-filter--selected:hover:not(:disabled) {
+  background: var(--bs-chip-bg-primary-hover);
+}
+
+.bs-chip-filter--selected:active:not(:disabled) {
+  background: var(--bs-chip-bg-primary-pressed);
+}
+
+.bs-chip-filter--selected:focus-visible {
+  background: var(--bs-chip-bg-primary-focused);
+}
+
+.bs-chip-filter:disabled {
+  background: var(--bs-chip-bg-disabled);
+  color: var(--bs-chip-text-disabled);
+  cursor: not-allowed;
+}

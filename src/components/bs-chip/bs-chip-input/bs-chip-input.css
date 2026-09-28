@@ -1,0 +1,172 @@
+/**
+ * @prop --bs-chip-input-height-md: Height at size="md". Aliased to --bs-spacing-300.
+ * @prop --bs-chip-input-height-lg: Height at size="lg". Aliased to --bs-spacing-400.
+ * @prop --bs-chip-input-gap: Gap between icon/label/remove. Aliased to --bs-spacing-50.
+ * @prop --bs-chip-input-padding-x-glyph-side: Horizontal padding on an edge adjacent to a glyph
+ * (the icon on the left, or the remove button on the right, which is always present). Aliased to
+ * --bs-spacing-100.
+ * @prop --bs-chip-input-padding-x-plain-side: Left-edge padding when there's no leading icon.
+ * Aliased to --bs-spacing-150.
+ * @prop --bs-chip-input-font-size: Aliased to --bs-font-size-sm.
+ * @prop --bs-chip-input-line-height: Aliased to --bs-line-height-body-sm.
+ * @prop --bs-chip-input-font-weight: Aliased to --bs-font-weight-regular.
+ *
+ * Color (background/text per selected/hover/focus/pressed/disabled state) comes directly from
+ * brandsync-tokens' own pre-built chip token set (--bs-chip-bg-..., --bs-chip-text-...,
+ * --bs-chip-border-...) below -- shared across the whole bs-chip family, not local to this
+ * component, consumed directly rather than re-aliased under a bs-chip-input-specific name.
+ */
+:host {
+  display: inline-flex;
+  align-items: center;
+  box-sizing: border-box;
+  gap: var(--bs-chip-input-gap);
+  border-radius: var(--bs-border-radius-full);
+  font-family: inherit;
+  font-size: var(--bs-chip-input-font-size);
+  font-weight: var(--bs-chip-input-font-weight);
+  line-height: calc(var(--bs-chip-input-line-height) * 1px);
+  white-space: nowrap;
+  background: var(--bs-chip-bg-primary-container);
+  color: var(--bs-chip-text-primary);
+  transition: background-color var(--bs-duration-fast, 120ms) var(--bs-easing-standard, ease);
+
+  --bs-chip-input-height-md: var(--bs-spacing-300);
+  --bs-chip-input-height-lg: var(--bs-spacing-400);
+  --bs-chip-input-gap: var(--bs-spacing-50);
+  --bs-chip-input-padding-x-glyph-side: var(--bs-spacing-100);
+  --bs-chip-input-padding-x-plain-side: var(--bs-spacing-150);
+  --bs-chip-input-font-size: var(--bs-font-size-sm);
+  --bs-chip-input-line-height: var(--bs-line-height-body-sm);
+  --bs-chip-input-font-weight: var(--bs-font-weight-regular);
+}
+
+:host(.bs-chip-input--md) {
+  height: var(--bs-chip-input-height-md);
+}
+
+:host(.bs-chip-input--lg) {
+  height: var(--bs-chip-input-height-lg);
+}
+
+/* Reset -- both are plain, borderless, transparent flex items. Background/color/focus-ring all
+   live on :host (see below), so the whole pill reacts uniformly no matter which button is
+   actually hovered/focused/pressed -- :hover/:focus-within/:active on a host all match whenever
+   the pointer/focus is on any shadow-DOM descendant, not just the host element itself. */
+.bs-chip-input__body,
+.bs-chip-input__remove {
+  display: flex;
+  align-items: center;
+  height: 100%;
+  border: none;
+  background: transparent;
+  padding: 0;
+  margin: 0;
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
+}
+
+.bs-chip-input__body {
+  gap: var(--bs-chip-input-gap);
+  padding-right: 0;
+}
+
+:host(.bs-chip-input--icon) .bs-chip-input__body {
+  padding-left: var(--bs-chip-input-padding-x-glyph-side);
+}
+
+:host(.bs-chip-input--text) .bs-chip-input__body {
+  padding-left: var(--bs-chip-input-padding-x-plain-side);
+}
+
+.bs-chip-input__remove {
+  padding-left: 0;
+  padding-right: var(--bs-chip-input-padding-x-glyph-side);
+}
+
+.bs-chip-input__icon {
+  display: none;
+  flex-shrink: 0;
+}
+
+.bs-chip-input__icon--visible {
+  display: flex;
+  align-items: center;
+}
+
+/* Defaults slotted content to 16px, matching bs-chip-filter's icon slot -- a plain <svg> with no
+   intrinsic width/height otherwise collapses to 0x0 as a flex item (confirmed by measuring a real
+   render). bs-avatar is exempted: Figma specs it at 24px with its own border ring matching
+   --chip/border-inverse exactly (verified, --bs-border-neutral-container resolves to the same
+   #c2c7d3 hex), so it needs to keep sizing itself via its own `size` prop instead. */
+.bs-chip-input__icon ::slotted(*) {
+  display: block;
+  width: 16px;
+  height: 16px;
+}
+
+.bs-chip-input__icon ::slotted(bs-avatar) {
+  width: auto;
+  height: auto;
+}
+
+.bs-chip-input__label {
+  display: flex;
+  align-items: center;
+}
+
+.bs-chip-input__remove svg {
+  display: block;
+  width: 16px;
+  height: 16px;
+}
+
+/* Unselected (default): the light "container" background set. :active is declared AFTER
+   :focus-within so a mouse click's pressed background wins the cascade -- a mousedown makes both
+   equally true at once (clicking a button focuses it too), and with matching specificity the
+   later rule otherwise wins, which put the focused (not pressed) color on a plain click
+   (confirmed via a real computed-style check). The focus outline itself still applies regardless
+   of source order, since the active rule below only ever sets background. */
+:host(:hover:not([disabled])) {
+  background: var(--bs-chip-bg-primary-container-hover);
+}
+
+:host(:focus-within:not([disabled])) {
+  background: var(--bs-chip-bg-primary-container-focused);
+  outline: 2px solid var(--bs-chip-border-focus);
+  outline-offset: 2px;
+}
+
+:host(:active:not([disabled])) {
+  background: var(--bs-chip-bg-primary-container-pressed);
+}
+
+/* Selected: the dark "primary" background set, inverse (white) text -- swaps every state above
+   to its --primary-* (not --primary-container-*) counterpart. */
+:host([selected]) {
+  background: var(--bs-chip-bg-primary);
+  color: var(--bs-chip-text-inverse);
+}
+
+:host([selected]:hover:not([disabled])) {
+  background: var(--bs-chip-bg-primary-hover);
+}
+
+:host([selected]:focus-within:not([disabled])) {
+  background: var(--bs-chip-bg-primary-focused);
+}
+
+:host([selected]:active:not([disabled])) {
+  background: var(--bs-chip-bg-primary-pressed);
+}
+
+:host([disabled]) {
+  background: var(--bs-chip-bg-disabled);
+  color: var(--bs-chip-text-disabled);
+}
+
+.bs-chip-input__body:disabled,
+.bs-chip-input__remove:disabled {
+  cursor: not-allowed;
+}
