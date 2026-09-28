@@ -23,7 +23,10 @@ jobs:
           fetch-depth: 0
       - uses: actions/setup-node@v4
         with:
-          node-version: 20
+          # 22, not 20: @changesets/cli calls Node's built-in module.enableCompileCache(),
+          # which only exists from Node 22.1.0+ -- confirmed directly via a real CI failure
+          # ("enableCompileCache is not a function") on Node 20.20.2.
+          node-version: 22
           cache: npm
       - run: npm ci
       - name: Cache Playwright browsers
