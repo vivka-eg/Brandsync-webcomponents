@@ -1,0 +1,52 @@
+name: Release
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: write
+  pull-requests: write
+  id-token: write
+
+concurrency:
+  group: release
+  cancel-in-progress: false
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          # changesets/action needs full history to diff which packages changed.
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - run: npm ci
+      - name: Cache Playwright browsers
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
+      - run: npx playwright install --with-deps chromium
+      # Re-running the full build + test suite here (even though the tagged commit already passed
+      # ci.yml on push) is intentional redundancy -- guards against main having moved between the
+      # PR merge and this job actually running, not just re-checking the same commit twice.
+      - run: npm run build:all
+      - run: npm test
+
+      # If there are unreleased .changeset/*.md files on main, this opens/updates a "Version
+      # Packages" PR (running `changeset version` for you -- lockstepped bumps + CHANGELOGs,
+      # changeset files consumed) and does NOT publish. Merging that PR is the deliberate human
+      # checkpoint. If main has no pending changesets (i.e. that PR was just merged), this instead
+      # runs the publish step below.
+      - name: Create Version PR or publish
+        uses: changesets/action@v1
+        with:
+          publish: bash scripts/publish.sh
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
