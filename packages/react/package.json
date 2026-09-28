@@ -1,0 +1,39 @@
+{
+  "name": "@brandsync/react",
+  "version": "1.0.0",
+  "description": "React component wrappers for Brandsync design system Web Components",
+  "publishConfig": {
+    "access": "public"
+  },
+  "main": "dist/index.js",
+  "module": "dist/index.mjs",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist/"
+  ],
+  "scripts": {
+    "build": "tsup"
+  },
+  "peerDependencies": {
+    "react": "^18 || ^19",
+    "react-dom": "^18 || ^19"
+  },
+  "dependencies": {
+    "@brandsync/wc": "^1.0.0",
+    "@stencil/react-output-target": "^1.6.2"
+  },
+  "devDependencies": {
+    "@types/react": "^19.2.17",
+    "@types/react-dom": "^19.2.3",
+    "tsup": "^8.3.5",
+    "typescript": "^5.9.3"
+  },
+  "license": "MIT"
+}

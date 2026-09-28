@@ -27,9 +27,12 @@ export const config: Config = {
       serviceWorker: null, // disable service workers
     },
     reactOutputTarget({
-      outDir: '../brandsync-web-components-react/src',
+      // In-repo now (npm workspace sibling, at packages/react -- this config lives at
+      // packages/wc), not a directory outside the repo entirely -- moved so GitHub Actions
+      // (which only checks out this one repo) can actually build/publish it.
+      outDir: '../react/src',
       componentCorePackage: '@brandsync/wc',
-      proxiesFile: '../brandsync-web-components-react/src/components.ts',
+      proxiesFile: '../react/src/components.ts',
     }),
     angularOutputTarget({
       componentCorePackage: '@brandsync/wc',
@@ -38,8 +41,9 @@ export const config: Config = {
       // ('dist/components') for the same package -- align them so @brandsync/wc only needs one
       // exports entry to serve both wrapper packages.
       customElementsDir: 'dist/components',
-      directivesProxyFile: '../brandsync-web-components-angular/src/lib/components.ts',
-      directivesArrayFile: '../brandsync-web-components-angular/src/lib/index.ts',
+      // Same in-repo move as reactOutputTarget above.
+      directivesProxyFile: '../angular/src/lib/components.ts',
+      directivesArrayFile: '../angular/src/lib/index.ts',
     }),
   ],
 };
