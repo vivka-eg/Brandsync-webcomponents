@@ -39,10 +39,11 @@
     "custom-elements.json"
   ],
   "scripts": {
-    "build": "stencil build",
-    "start": "stencil build --dev --watch --serve",
-    "test": "stencil build --prod && vitest run",
-    "test:watch": "stencil build --prod && vitest watch",
+    "seed-manifest": "test -f custom-elements.json || echo '{\"modules\":[]}' > custom-elements.json",
+    "build": "npm run seed-manifest && stencil build",
+    "start": "npm run seed-manifest && stencil build --dev --watch --serve",
+    "test": "npm run seed-manifest && stencil build --prod && vitest run",
+    "test:watch": "npm run seed-manifest && stencil build --prod && vitest watch",
     "generate": "stencil generate",
     "storybook": "npm run build && storybook dev -p 6006",
     "build-storybook": "npm run build && storybook build"
