@@ -66,6 +66,7 @@ import '../dist/components/bs-navigation-header.js';
 import '../dist/components/bs-pagination.js';
 import '../dist/components/bs-tab.js';
 import '../dist/components/bs-tabs.js';
+import '../dist/components/bs-toast.js';
 import '../dist/components/bs-tooltip.js';
 
 // Drives the auto-generated props/slots/parts tables on each component's Docs page from the

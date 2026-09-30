@@ -1,0 +1,151 @@
+/**
+ * @prop --bs-toast-radius: Corner radius of the toast. Aliased to --bs-border-radius-100.
+ * @prop --bs-toast-shadow: Elevation shadow, since a toast floats above page content. Aliased to --bs-shadow-md.
+ * @prop --bs-toast-content-padding-y: Top/bottom padding of the content area. Aliased to --bs-spacing-200.
+ * @prop --bs-toast-content-padding-x: Left padding of the content area (the toast's own left edge). Aliased to --bs-spacing-200.
+ * @prop --bs-toast-content-gap: Gap between the icon and the message. Aliased to --bs-spacing-150.
+ * @prop --bs-toast-font-size: Message font size. Aliased to --bs-font-size-md.
+ * @prop --bs-toast-line-height: Message line height. Aliased to --bs-line-height-body-md.
+ * @prop --bs-toast-actions-padding-y: Top/bottom padding of the actions area. Aliased to --bs-spacing-50.
+ * @prop --bs-toast-actions-padding-x: Right padding of the actions area (the toast's own right edge). Aliased to --bs-spacing-100.
+ * @prop --bs-toast-close-radius: Corner radius of the close button. Aliased to --bs-border-radius-100.
+ * @prop --bs-toast-surface-info: Toast background, state="info". Aliased to --bs-color-info-container.
+ * @prop --bs-toast-text-info: Icon/message/close color, state="info". Aliased to --bs-text-info.
+ * @prop --bs-toast-surface-warning: Toast background, state="warning". Aliased to --bs-color-warning-container.
+ * @prop --bs-toast-text-warning: Icon/message/close color, state="warning". Aliased to --bs-text-warning.
+ * @prop --bs-toast-surface-success: Toast background, state="success". Aliased to --bs-color-success-container.
+ * @prop --bs-toast-text-success: Icon/message/close color, state="success". Aliased to --bs-text-success.
+ * @prop --bs-toast-surface-error: Toast background, state="error". Aliased to --bs-color-error-container.
+ * @prop --bs-toast-text-error: Icon/message/close color, state="error". Aliased to --bs-text-error.
+ */
+:host {
+  display: inline-flex;
+
+  --bs-toast-radius: var(--bs-border-radius-100);
+  --bs-toast-shadow: var(--bs-shadow-md);
+  --bs-toast-content-padding-y: var(--bs-spacing-200);
+  --bs-toast-content-padding-x: var(--bs-spacing-200);
+  --bs-toast-content-gap: var(--bs-spacing-150);
+  --bs-toast-font-size: var(--bs-font-size-md);
+  --bs-toast-line-height: var(--bs-line-height-body-md);
+  --bs-toast-actions-padding-y: var(--bs-spacing-50);
+  --bs-toast-actions-padding-x: var(--bs-spacing-100);
+  --bs-toast-close-radius: var(--bs-border-radius-100);
+
+  --bs-toast-surface-info: var(--bs-color-info-container);
+  --bs-toast-text-info: var(--bs-text-info);
+
+  --bs-toast-surface-warning: var(--bs-color-warning-container);
+  --bs-toast-text-warning: var(--bs-text-warning);
+
+  --bs-toast-surface-success: var(--bs-color-success-container);
+  --bs-toast-text-success: var(--bs-text-success);
+
+  --bs-toast-surface-error: var(--bs-color-error-container);
+  --bs-toast-text-error: var(--bs-text-error);
+}
+
+.bs-toast {
+  display: flex;
+  align-items: center;
+  border-radius: var(--bs-toast-radius);
+  box-shadow: var(--bs-toast-shadow);
+  font-family: inherit;
+}
+
+/* Each state sets its own surface/text pair -- .bs-toast__icon, .bs-toast__message, and
+   .bs-toast__close all inherit `color` from here rather than each redeclaring it. */
+.bs-toast--info {
+  background: var(--bs-toast-surface-info);
+  color: var(--bs-toast-text-info);
+}
+
+.bs-toast--warning {
+  background: var(--bs-toast-surface-warning);
+  color: var(--bs-toast-text-warning);
+}
+
+.bs-toast--success {
+  background: var(--bs-toast-surface-success);
+  color: var(--bs-toast-text-success);
+}
+
+.bs-toast--error {
+  background: var(--bs-toast-surface-error);
+  color: var(--bs-toast-text-error);
+}
+
+.bs-toast__content {
+  display: flex;
+  align-items: center;
+  gap: var(--bs-toast-content-gap);
+  flex: 1 1 auto;
+  min-width: 0;
+  padding: var(--bs-toast-content-padding-y) 0 var(--bs-toast-content-padding-y) var(--bs-toast-content-padding-x);
+}
+
+.bs-toast__icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  flex-shrink: 0;
+  color: inherit;
+}
+
+.bs-toast__icon svg {
+  width: 24px;
+  height: 24px;
+}
+
+.bs-toast__message {
+  flex: 1 1 auto;
+  min-width: 0;
+  font-size: var(--bs-toast-font-size);
+  line-height: calc(var(--bs-toast-line-height) * 1px);
+}
+
+.bs-toast__actions {
+  display: flex;
+  align-items: center;
+  align-self: stretch;
+  flex-shrink: 0;
+  padding: var(--bs-toast-actions-padding-y) var(--bs-toast-actions-padding-x) var(--bs-toast-actions-padding-y) 0;
+}
+
+.bs-toast__close {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  flex-shrink: 0;
+  padding: 0;
+  border: none;
+  background: transparent;
+  border-radius: var(--bs-toast-close-radius);
+  color: inherit;
+  cursor: pointer;
+}
+
+.bs-toast__close svg {
+  width: 24px;
+  height: 24px;
+}
+
+/* Same color-mix tint technique as bs-snackbar's close button -- a transparent background with
+   only text color, so a real added tint (not an opacity blend toward whatever's behind) is needed
+   for hover/pressed feedback to read correctly on the light pastel state surfaces. */
+.bs-toast__close:hover {
+  background: color-mix(in srgb, currentColor 12%, transparent);
+}
+
+.bs-toast__close:active {
+  background: color-mix(in srgb, currentColor 24%, transparent);
+}
+
+.bs-toast__close:focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: 2px;
+}

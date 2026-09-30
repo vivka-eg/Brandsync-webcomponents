@@ -48,5 +48,6 @@ export const DIRECTIVES = [
   d.BsSwitch,
   d.BsTab,
   d.BsTabs,
+  d.BsToast,
   d.BsTooltip
 ];

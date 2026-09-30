@@ -33,6 +33,7 @@ import { BsStepperDirection as BsStepperDirection1, BsStepperStepComputedState }
 import { BsSwitchSize } from "./components/bs-switch/bs-switch";
 import { BsTabIconPosition } from "./components/bs-tab/bs-tab/bs-tab";
 import { BsTabsOrientation, BsTabsType } from "./components/bs-tab/bs-tabs/bs-tabs";
+import { BsToastState } from "./components/bs-toast/bs-toast";
 export { BsAttachmentType } from "./components/bs-attachment/bs-attachment";
 export { BsAvatarSize, BsAvatarType } from "./components/bs-avatar/bs-avatar";
 export { BsBadgeVariant } from "./components/bs-badge/bs-badge";
@@ -61,6 +62,7 @@ export { BsStepperDirection as BsStepperDirection1, BsStepperStepComputedState }
 export { BsSwitchSize } from "./components/bs-switch/bs-switch";
 export { BsTabIconPosition } from "./components/bs-tab/bs-tab/bs-tab";
 export { BsTabsOrientation, BsTabsType } from "./components/bs-tab/bs-tabs/bs-tabs";
+export { BsToastState } from "./components/bs-toast/bs-toast";
 export namespace Components {
     /**
      * A centered caption disclaimer for Genie AI surfaces, e.g. "AI can make mistakes. Please verify
@@ -1982,6 +1984,21 @@ export namespace Components {
         "type": BsTabsType;
     }
     /**
+     * A transient status message for confirming the result of an action (e.g. "Files uploaded
+     * successfully.") -- a state-specific icon, a message, and a close button.
+     * This component only renders the toast itself -- it doesn't manage its own visibility, timing, or
+     * stacking. A consumer (typically a small "toast manager" utility) creates one per message and
+     * removes it from the DOM again, whether on a timer or on `bsDismiss`. Figma's spec doesn't show
+     * auto-dismiss timing at all (it's a static visual spec), so this deliberately doesn't invent one.
+     */
+    interface BsToast {
+        /**
+          * Semantic state. Each state has its own icon and matching container/text tokens -- there is no neutral/default state.
+          * @default 'info'
+         */
+        "state": BsToastState;
+    }
+    /**
      * A dark tooltip bubble with a pointer arrow, used to surface a short hint of extra information
      * next to a trigger element.
      * `bs-tooltip` is a purely presentational bubble -- like `bs-menu`, it does not manage its own
@@ -2115,6 +2132,10 @@ export interface BsSwitchCustomEvent<T> extends CustomEvent<T> {
 export interface BsTabCustomEvent<T> extends CustomEvent<T> {
     detail: T;
     target: HTMLBsTabElement;
+}
+export interface BsToastCustomEvent<T> extends CustomEvent<T> {
+    detail: T;
+    target: HTMLBsToastElement;
 }
 declare global {
     /**
@@ -3652,6 +3673,31 @@ declare global {
         prototype: HTMLBsTabsElement;
         new (): HTMLBsTabsElement;
     };
+    interface HTMLBsToastElementEventMap {
+        "bsDismiss": void;
+    }
+    /**
+     * A transient status message for confirming the result of an action (e.g. "Files uploaded
+     * successfully.") -- a state-specific icon, a message, and a close button.
+     * This component only renders the toast itself -- it doesn't manage its own visibility, timing, or
+     * stacking. A consumer (typically a small "toast manager" utility) creates one per message and
+     * removes it from the DOM again, whether on a timer or on `bsDismiss`. Figma's spec doesn't show
+     * auto-dismiss timing at all (it's a static visual spec), so this deliberately doesn't invent one.
+     */
+    interface HTMLBsToastElement extends Components.BsToast, HTMLStencilElement {
+        addEventListener<K extends keyof HTMLBsToastElementEventMap>(type: K, listener: (this: HTMLBsToastElement, ev: BsToastCustomEvent<HTMLBsToastElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLBsToastElementEventMap>(type: K, listener: (this: HTMLBsToastElement, ev: BsToastCustomEvent<HTMLBsToastElementEventMap[K]>) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
+    }
+    var HTMLBsToastElement: {
+        prototype: HTMLBsToastElement;
+        new (): HTMLBsToastElement;
+    };
     /**
      * A dark tooltip bubble with a pointer arrow, used to surface a short hint of extra information
      * next to a trigger element.
@@ -3732,6 +3778,7 @@ declare global {
         "bs-switch": HTMLBsSwitchElement;
         "bs-tab": HTMLBsTabElement;
         "bs-tabs": HTMLBsTabsElement;
+        "bs-toast": HTMLBsToastElement;
         "bs-tooltip": HTMLBsTooltipElement;
     }
 }
@@ -5861,6 +5908,25 @@ declare namespace LocalJSX {
         "type"?: BsTabsType;
     }
     /**
+     * A transient status message for confirming the result of an action (e.g. "Files uploaded
+     * successfully.") -- a state-specific icon, a message, and a close button.
+     * This component only renders the toast itself -- it doesn't manage its own visibility, timing, or
+     * stacking. A consumer (typically a small "toast manager" utility) creates one per message and
+     * removes it from the DOM again, whether on a timer or on `bsDismiss`. Figma's spec doesn't show
+     * auto-dismiss timing at all (it's a static visual spec), so this deliberately doesn't invent one.
+     */
+    interface BsToast {
+        /**
+          * Fires when the close button is clicked. This component doesn't remove itself from the DOM -- the consumer is expected to do that (or hide it) in response to this event.
+         */
+        "onBsDismiss"?: (event: BsToastCustomEvent<void>) => void;
+        /**
+          * Semantic state. Each state has its own icon and matching container/text tokens -- there is no neutral/default state.
+          * @default 'info'
+         */
+        "state"?: BsToastState;
+    }
+    /**
      * A dark tooltip bubble with a pointer arrow, used to surface a short hint of extra information
      * next to a trigger element.
      * `bs-tooltip` is a purely presentational bubble -- like `bs-menu`, it does not manage its own
@@ -6169,6 +6235,9 @@ declare namespace LocalJSX {
         "type": BsTabsType;
         "orientation": BsTabsOrientation;
     }
+    interface BsToastAttributes {
+        "state": BsToastState;
+    }
     interface BsTooltipAttributes {
         "placement": 'top';
     }
@@ -6220,6 +6289,7 @@ declare namespace LocalJSX {
         "bs-switch": Omit<BsSwitch, keyof BsSwitchAttributes> & { [K in keyof BsSwitch & keyof BsSwitchAttributes]?: BsSwitch[K] } & { [K in keyof BsSwitch & keyof BsSwitchAttributes as `attr:${K}`]?: BsSwitchAttributes[K] } & { [K in keyof BsSwitch & keyof BsSwitchAttributes as `prop:${K}`]?: BsSwitch[K] };
         "bs-tab": Omit<BsTab, keyof BsTabAttributes> & { [K in keyof BsTab & keyof BsTabAttributes]?: BsTab[K] } & { [K in keyof BsTab & keyof BsTabAttributes as `attr:${K}`]?: BsTabAttributes[K] } & { [K in keyof BsTab & keyof BsTabAttributes as `prop:${K}`]?: BsTab[K] };
         "bs-tabs": Omit<BsTabs, keyof BsTabsAttributes> & { [K in keyof BsTabs & keyof BsTabsAttributes]?: BsTabs[K] } & { [K in keyof BsTabs & keyof BsTabsAttributes as `attr:${K}`]?: BsTabsAttributes[K] } & { [K in keyof BsTabs & keyof BsTabsAttributes as `prop:${K}`]?: BsTabs[K] };
+        "bs-toast": Omit<BsToast, keyof BsToastAttributes> & { [K in keyof BsToast & keyof BsToastAttributes]?: BsToast[K] } & { [K in keyof BsToast & keyof BsToastAttributes as `attr:${K}`]?: BsToastAttributes[K] } & { [K in keyof BsToast & keyof BsToastAttributes as `prop:${K}`]?: BsToast[K] };
         "bs-tooltip": Omit<BsTooltip, keyof BsTooltipAttributes> & { [K in keyof BsTooltip & keyof BsTooltipAttributes]?: BsTooltip[K] } & { [K in keyof BsTooltip & keyof BsTooltipAttributes as `attr:${K}`]?: BsTooltipAttributes[K] } & { [K in keyof BsTooltip & keyof BsTooltipAttributes as `prop:${K}`]?: BsTooltip[K] };
     }
 }
@@ -7227,6 +7297,15 @@ declare module "@stencil/core" {
              *   directly.
              */
             "bs-tabs": LocalJSX.IntrinsicElements["bs-tabs"] & JSXBase.HTMLAttributes<HTMLBsTabsElement>;
+            /**
+             * A transient status message for confirming the result of an action (e.g. "Files uploaded
+             * successfully.") -- a state-specific icon, a message, and a close button.
+             * This component only renders the toast itself -- it doesn't manage its own visibility, timing, or
+             * stacking. A consumer (typically a small "toast manager" utility) creates one per message and
+             * removes it from the DOM again, whether on a timer or on `bsDismiss`. Figma's spec doesn't show
+             * auto-dismiss timing at all (it's a static visual spec), so this deliberately doesn't invent one.
+             */
+            "bs-toast": LocalJSX.IntrinsicElements["bs-toast"] & JSXBase.HTMLAttributes<HTMLBsToastElement>;
             /**
              * A dark tooltip bubble with a pointer arrow, used to surface a short hint of extra information
              * next to a trigger element.

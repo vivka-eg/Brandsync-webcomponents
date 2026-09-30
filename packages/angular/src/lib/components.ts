@@ -52,6 +52,7 @@ import { defineCustomElement as defineBsStepperStep } from '@brandsync/wc/dist/c
 import { defineCustomElement as defineBsSwitch } from '@brandsync/wc/dist/components/bs-switch.js';
 import { defineCustomElement as defineBsTab } from '@brandsync/wc/dist/components/bs-tab.js';
 import { defineCustomElement as defineBsTabs } from '@brandsync/wc/dist/components/bs-tabs.js';
+import { defineCustomElement as defineBsToast } from '@brandsync/wc/dist/components/bs-toast.js';
 import { defineCustomElement as defineBsTooltip } from '@brandsync/wc/dist/components/bs-tooltip.js';
 @ProxyCmp({
   defineCustomElementFn: defineBsAiDisclaimer
@@ -1490,6 +1491,39 @@ export class BsTabs {
 
 
 export declare interface BsTabs extends Components.BsTabs {}
+
+
+@ProxyCmp({
+  defineCustomElementFn: defineBsToast,
+  inputs: ['state']
+})
+@Component({
+  selector: 'bs-toast',
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  template: '<ng-content></ng-content>',
+  // eslint-disable-next-line @angular-eslint/no-inputs-metadata-property
+  inputs: ['state'],
+  outputs: ['bsDismiss'],
+})
+export class BsToast {
+  protected el: HTMLBsToastElement;
+  @Output() bsDismiss = new EventEmitter<BsToastCustomEvent<void>>();
+  constructor(c: ChangeDetectorRef, r: ElementRef, protected z: NgZone) {
+    c.detach();
+    this.el = r.nativeElement;
+  }
+}
+
+
+import type { BsToastCustomEvent } from '@brandsync/wc/dist/components';
+
+export declare interface BsToast extends Components.BsToast {
+  /**
+   * Fires when the close button is clicked. This component doesn't remove itself from the DOM --
+the consumer is expected to do that (or hide it) in response to this event.
+   */
+  bsDismiss: EventEmitter<BsToastCustomEvent<void>>;
+}
 
 
 @ProxyCmp({
