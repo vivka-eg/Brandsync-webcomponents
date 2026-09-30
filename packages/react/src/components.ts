@@ -50,6 +50,8 @@ import { BsNavigationDrawerItem as BsNavigationDrawerItemElement, defineCustomEl
 import { BsNavigationDrawer as BsNavigationDrawerElement, defineCustomElement as defineBsNavigationDrawer } from "@brandsync/wc/dist/components/bs-navigation-drawer.js";
 import { BsNavigationHeader as BsNavigationHeaderElement, defineCustomElement as defineBsNavigationHeader } from "@brandsync/wc/dist/components/bs-navigation-header.js";
 import { BsPagination as BsPaginationElement, defineCustomElement as defineBsPagination } from "@brandsync/wc/dist/components/bs-pagination.js";
+import { BsProgressLinear as BsProgressLinearElement, defineCustomElement as defineBsProgressLinear } from "@brandsync/wc/dist/components/bs-progress-linear.js";
+import { BsProgress as BsProgressElement, defineCustomElement as defineBsProgress } from "@brandsync/wc/dist/components/bs-progress.js";
 import { BsRadio as BsRadioElement, defineCustomElement as defineBsRadio } from "@brandsync/wc/dist/components/bs-radio.js";
 import { BsSlider as BsSliderElement, defineCustomElement as defineBsSlider } from "@brandsync/wc/dist/components/bs-slider.js";
 import { BsSnackbar as BsSnackbarElement, defineCustomElement as defineBsSnackbar } from "@brandsync/wc/dist/components/bs-snackbar.js";
@@ -563,6 +565,28 @@ export const BsPagination: StencilReactComponent<BsPaginationElement, BsPaginati
     react: React,
     events: { onBsPageChange: 'bsPageChange' } as BsPaginationEvents,
     defineCustomElement: defineBsPagination
+});
+
+export type BsProgressEvents = NonNullable<unknown>;
+
+export const BsProgress: StencilReactComponent<BsProgressElement, BsProgressEvents, Components.BsProgress> = /*@__PURE__*/ createComponent<BsProgressElement, BsProgressEvents, Components.BsProgress>({
+    tagName: 'bs-progress',
+    elementClass: BsProgressElement,
+    // @ts-ignore - ignore potential React type mismatches between the Stencil Output Target and your project.
+    react: React,
+    events: {} as BsProgressEvents,
+    defineCustomElement: defineBsProgress
+});
+
+export type BsProgressLinearEvents = NonNullable<unknown>;
+
+export const BsProgressLinear: StencilReactComponent<BsProgressLinearElement, BsProgressLinearEvents, Components.BsProgressLinear> = /*@__PURE__*/ createComponent<BsProgressLinearElement, BsProgressLinearEvents, Components.BsProgressLinear>({
+    tagName: 'bs-progress-linear',
+    elementClass: BsProgressLinearElement,
+    // @ts-ignore - ignore potential React type mismatches between the Stencil Output Target and your project.
+    react: React,
+    events: {} as BsProgressLinearEvents,
+    defineCustomElement: defineBsProgressLinear
 });
 
 export type BsRadioEvents = { onBsChange: EventName<BsRadioCustomEvent<string>> };

@@ -64,6 +64,8 @@ import '../dist/components/bs-navigation-drawer.js';
 import '../dist/components/bs-navigation-drawer-item.js';
 import '../dist/components/bs-navigation-header.js';
 import '../dist/components/bs-pagination.js';
+import '../dist/components/bs-progress.js';
+import '../dist/components/bs-progress-linear.js';
 import '../dist/components/bs-tab.js';
 import '../dist/components/bs-tabs.js';
 import '../dist/components/bs-toast.js';

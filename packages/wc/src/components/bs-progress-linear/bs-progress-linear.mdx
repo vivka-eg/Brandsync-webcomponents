@@ -1,0 +1,94 @@
+import { Meta, Canvas, Controls } from '@storybook/addon-docs/blocks';
+import * as ProgressLinearStories from './bs-progress-linear.stories';
+
+<Meta of={ProgressLinearStories} />
+
+# Progress Linear
+
+## Table of Contents
+
+- [Overview](#overview)
+- [Sizes](#sizes)
+- [Values](#values)
+- [Without label](#without-label)
+- [Indeterminate](#indeterminate)
+- [Component API](#component-api)
+- [Accessibility](#accessibility)
+
+## Overview
+
+A linear (horizontal) progress indicator -- either a static bar showing a percentage fill
+(`type="determinate"`) or a continuously sliding bar signaling in-progress work with no known
+completion percentage (`type="indeterminate"`).
+
+**When to use**
+- Showing the progress of a task with a known, quantifiable completion percentage (`determinate`),
+  e.g. a file upload.
+- Signaling that work is happening in the background with no meaningful percentage to report
+  (`indeterminate`), e.g. while waiting on a network response.
+
+**When not to use**
+- For a compact, ring-shaped progress indicator -- use `bs-progress` (circular) instead.
+- For a percentage that's better expressed as plain text, without the reserved space and visual
+  weight of a bar.
+
+<Canvas of={ProgressLinearStories.Default} />
+
+## Sizes
+
+`size` covers `small` (4px bar height) and `large` (8px bar height) -- the two fixed heights from
+the Figma spec.
+
+<Canvas of={ProgressLinearStories.Sizes} />
+
+## Values
+
+`value` (`0`-`100`) drives the fill's width for `type="determinate"`. Out-of-range values (e.g.
+`150` or `-10`) are clamped defensively rather than rendering an invalid width.
+
+<Canvas of={ProgressLinearStories.Values} />
+
+## Without label
+
+`show-label` (default `true`) can be set to `false` to render just the bar, no label -- the label
+wrapper is also omitted automatically whenever there's no slotted content, regardless of
+`show-label`, so an empty label never reserves visual space for nothing.
+
+<Canvas of={ProgressLinearStories.WithoutLabel} />
+
+## Indeterminate
+
+`type="indeterminate"` renders a continuously sliding gradient "comet" bar instead of a
+value-driven fill, and ignores `value` entirely. Unlike `bs-progress`'s indeterminate ring, the
+label is still available here (it's free-form slotted content, not a computed percentage), so it's
+still shown by default.
+
+<Canvas of={ProgressLinearStories.Indeterminate} />
+
+## Component API
+
+<Controls of={ProgressLinearStories.Default} />
+
+**Customization surface** (see `CONVENTIONS.md` in the repo root for the full convention):
+- Slots: default (unnamed) slot -- free-form label content rendered below the bar (e.g.
+  `<bs-progress-linear value="40">Uploading...</bs-progress-linear>`), not a computed `${value}%`
+  string like `bs-progress`'s label.
+- Shadow parts: `::part(container)`, `::part(track)`, `::part(fill)`, `::part(label)`
+- CSS Custom Properties: `--bs-progress-linear-gap`, `--bs-progress-linear-track`,
+  `--bs-progress-linear-fill`, `--bs-progress-linear-radius`, `--bs-progress-linear-height-sm`,
+  `--bs-progress-linear-height-lg`, `--bs-progress-linear-label-color`,
+  `--bs-progress-linear-label-font-size`, `--bs-progress-linear-label-line-height`,
+  `--bs-progress-linear-transition-duration`, `--bs-progress-linear-slide-duration` -- see
+  `bs-progress-linear.css`'s header block for what each aliases to.
+
+## Accessibility
+
+- The track carries `role="progressbar"`. For `type="determinate"`, `aria-valuemin="0"`,
+  `aria-valuemax="100"`, and `aria-valuenow` (the clamped value) are all set -- the standard
+  progressbar-with-a-known-value pattern.
+- For `type="indeterminate"`, `aria-valuenow` is intentionally omitted (there's no known percentage
+  to report) and `aria-busy="true"` is set instead -- the standard progressbar-without-a-known-value
+  pattern, rather than faking a `0` or `100` value.
+- The indeterminate slide respects `prefers-reduced-motion: reduce` by slowing to a much longer loop
+  (4x the normal duration) rather than freezing entirely -- freezing would remove the only visual
+  signal that work is still in progress when no percentage is available.

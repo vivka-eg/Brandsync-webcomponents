@@ -43,6 +43,8 @@ import { defineCustomElement as defineBsNavigationDrawer } from '@brandsync/wc/d
 import { defineCustomElement as defineBsNavigationDrawerItem } from '@brandsync/wc/dist/components/bs-navigation-drawer-item.js';
 import { defineCustomElement as defineBsNavigationHeader } from '@brandsync/wc/dist/components/bs-navigation-header.js';
 import { defineCustomElement as defineBsPagination } from '@brandsync/wc/dist/components/bs-pagination.js';
+import { defineCustomElement as defineBsProgress } from '@brandsync/wc/dist/components/bs-progress.js';
+import { defineCustomElement as defineBsProgressLinear } from '@brandsync/wc/dist/components/bs-progress-linear.js';
 import { defineCustomElement as defineBsRadio } from '@brandsync/wc/dist/components/bs-radio.js';
 import { defineCustomElement as defineBsSlider } from '@brandsync/wc/dist/components/bs-slider.js';
 import { defineCustomElement as defineBsSnackbar } from '@brandsync/wc/dist/components/bs-snackbar.js';
@@ -1214,6 +1216,52 @@ button -- not when `currentPage` is set programmatically from outside.
    */
   bsPageChange: EventEmitter<BsPaginationCustomEvent<number>>;
 }
+
+
+@ProxyCmp({
+  defineCustomElementFn: defineBsProgress,
+  inputs: ['showLabel', 'size', 'strokeWidth', 'type', 'value']
+})
+@Component({
+  selector: 'bs-progress',
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  template: '<ng-content></ng-content>',
+  // eslint-disable-next-line @angular-eslint/no-inputs-metadata-property
+  inputs: ['showLabel', 'size', 'strokeWidth', 'type', 'value'],
+})
+export class BsProgress {
+  protected el: HTMLBsProgressElement;
+  constructor(c: ChangeDetectorRef, r: ElementRef, protected z: NgZone) {
+    c.detach();
+    this.el = r.nativeElement;
+  }
+}
+
+
+export declare interface BsProgress extends Components.BsProgress {}
+
+
+@ProxyCmp({
+  defineCustomElementFn: defineBsProgressLinear,
+  inputs: ['showLabel', 'size', 'type', 'value']
+})
+@Component({
+  selector: 'bs-progress-linear',
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  template: '<ng-content></ng-content>',
+  // eslint-disable-next-line @angular-eslint/no-inputs-metadata-property
+  inputs: ['showLabel', 'size', 'type', 'value'],
+})
+export class BsProgressLinear {
+  protected el: HTMLBsProgressLinearElement;
+  constructor(c: ChangeDetectorRef, r: ElementRef, protected z: NgZone) {
+    c.detach();
+    this.el = r.nativeElement;
+  }
+}
+
+
+export declare interface BsProgressLinear extends Components.BsProgressLinear {}
 
 
 @ProxyCmp({

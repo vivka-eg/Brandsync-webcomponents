@@ -1,0 +1,108 @@
+/**
+ * @prop --bs-progress-linear-gap: Gap between the bar and the label. Aliased to --bs-spacing-100.
+ * @prop --bs-progress-linear-track: Track bar background color. Aliased to --bs-surface-container
+ *   (matches the Figma spec's `--color/surface/container` token exactly).
+ * @prop --bs-progress-linear-fill: Determinate fill / indeterminate comet color. Aliased to
+ *   --bs-color-primary-default (the same brand-blue accent bs-progress's arc and bs-button's
+ *   primary variant already use).
+ * @prop --bs-progress-linear-radius: Track/fill border-radius (full pill). A fixed 120px, matching
+ *   the Figma spec's "rounded-full" treatment.
+ * @prop --bs-progress-linear-height-sm: Bar height, size="small". Fixed at 4px per the Figma spec.
+ * @prop --bs-progress-linear-height-lg: Bar height, size="large". Fixed at 8px per the Figma spec.
+ * @prop --bs-progress-linear-label-color: Label text color. Aliased to --bs-text-default.
+ * @prop --bs-progress-linear-label-font-size: Label font size (body/md). Aliased to --bs-fontsize-body-md.
+ * @prop --bs-progress-linear-label-line-height: Label line height (body/md). Aliased to --bs-line-height-body-md.
+ * @prop --bs-progress-linear-transition-duration: Determinate fill width transition. Aliased to
+ *   --bs-duration-default if defined by brandsync-tokens, otherwise a plain 0.3s fallback.
+ * @prop --bs-progress-linear-slide-duration: Indeterminate comet slide duration. Aliased to
+ *   --bs-duration-slower if defined by brandsync-tokens, otherwise a plain 1.6s fallback.
+ */
+:host {
+  display: flex;
+
+  --bs-progress-linear-gap: var(--bs-spacing-100);
+  --bs-progress-linear-track: var(--bs-surface-container);
+  --bs-progress-linear-fill: var(--bs-color-primary-default);
+  --bs-progress-linear-radius: 120px;
+  --bs-progress-linear-height-sm: 4px;
+  --bs-progress-linear-height-lg: 8px;
+  --bs-progress-linear-label-color: var(--bs-text-default);
+  --bs-progress-linear-label-font-size: var(--bs-fontsize-body-md);
+  --bs-progress-linear-label-line-height: var(--bs-line-height-body-md);
+  --bs-progress-linear-transition-duration: 0.3s;
+  --bs-progress-linear-slide-duration: 1.6s;
+}
+
+.bs-progress-linear {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  gap: var(--bs-progress-linear-gap);
+  font-family: inherit;
+}
+
+.bs-progress-linear__track {
+  position: relative;
+  width: 100%;
+  border-radius: var(--bs-progress-linear-radius);
+  background: var(--bs-progress-linear-track);
+  overflow: hidden;
+}
+
+.bs-progress-linear__track--small {
+  height: var(--bs-progress-linear-height-sm);
+}
+
+.bs-progress-linear__track--large {
+  height: var(--bs-progress-linear-height-lg);
+}
+
+.bs-progress-linear__fill {
+  height: 100%;
+  border-radius: var(--bs-progress-linear-radius);
+  background: var(--bs-progress-linear-fill);
+  transition: width var(--bs-progress-linear-transition-duration) ease;
+}
+
+/* Indeterminate: Figma's bar is a soft "comet" gradient segment (transparent -> solid color ->
+   transparent) sliding across the track's full width, not a flat-colored partial fill -- the same
+   fade concept as bs-progress's indeterminate ring's conic-gradient comet tail, but along a
+   straight line. A fixed-width gradient band is animated via `transform: translateX(...)` from
+   fully off-screen left to fully off-screen right, looping continuously. */
+.bs-progress-linear__fill--indeterminate {
+  position: absolute;
+  top: 0;
+  left: 0;
+  /* Figma's static snapshot (left-9.01%/right-66.58% of the track) puts the comet band at ~24% of
+     the track's width -- matching that proportion here rather than the wider 40% guess this was
+     originally built with. */
+  width: 24%;
+  min-width: 80px;
+  background: linear-gradient(90deg, transparent 0%, var(--bs-progress-linear-fill) 50%, transparent 100%);
+  animation: bs-progress-linear-slide var(--bs-progress-linear-slide-duration) ease-in-out infinite;
+}
+
+@keyframes bs-progress-linear-slide {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(250%);
+  }
+}
+
+/* Reduced motion: freezing the slide entirely would remove the only visual signal that work is
+   still in progress (indeterminate has no percentage to fall back on), so this slows the slide to
+   a much slower loop instead of stopping it -- still obviously "in progress" without being
+   motion-sickness-inducing. Same intent/rationale as bs-progress's indeterminate ring. */
+@media (prefers-reduced-motion: reduce) {
+  .bs-progress-linear__fill--indeterminate {
+    animation-duration: calc(var(--bs-progress-linear-slide-duration) * 4);
+  }
+}
+
+.bs-progress-linear__label {
+  color: var(--bs-progress-linear-label-color);
+  font-size: var(--bs-progress-linear-label-font-size);
+  line-height: calc(var(--bs-progress-linear-label-line-height) * 1px);
+}

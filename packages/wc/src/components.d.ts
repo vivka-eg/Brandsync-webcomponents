@@ -26,6 +26,8 @@ import { BsDialogSize } from "./components/bs-dialog/bs-dialog";
 import { BsIconButtonSize, BsIconButtonVariant } from "./components/bs-button/bs-icon-button/bs-icon-button";
 import { BsLogoBackground, BsLogoVariant } from "./components/bs-logo/bs-logo";
 import { BsNavigationHeaderAlignment } from "./components/ui-shell/bs-navigation-header/bs-navigation-header/bs-navigation-header";
+import { BsProgressSize, BsProgressStrokeWidth, BsProgressType } from "./components/bs-progress/bs-progress";
+import { BsProgressLinearSize, BsProgressLinearType } from "./components/bs-progress-linear/bs-progress-linear";
 import { BsSliderType } from "./components/bs-slider/bs-slider";
 import { BsSnackbarVariant } from "./components/bs-snackbar/bs-snackbar";
 import { BsStepperDirection } from "./components/bs-stepper/bs-stepper-step/bs-stepper-step";
@@ -55,6 +57,8 @@ export { BsDialogSize } from "./components/bs-dialog/bs-dialog";
 export { BsIconButtonSize, BsIconButtonVariant } from "./components/bs-button/bs-icon-button/bs-icon-button";
 export { BsLogoBackground, BsLogoVariant } from "./components/bs-logo/bs-logo";
 export { BsNavigationHeaderAlignment } from "./components/ui-shell/bs-navigation-header/bs-navigation-header/bs-navigation-header";
+export { BsProgressSize, BsProgressStrokeWidth, BsProgressType } from "./components/bs-progress/bs-progress";
+export { BsProgressLinearSize, BsProgressLinearType } from "./components/bs-progress-linear/bs-progress-linear";
 export { BsSliderType } from "./components/bs-slider/bs-slider";
 export { BsSnackbarVariant } from "./components/bs-snackbar/bs-snackbar";
 export { BsStepperDirection } from "./components/bs-stepper/bs-stepper-step/bs-stepper-step";
@@ -1600,6 +1604,82 @@ export namespace Components {
           * @default 1
          */
         "totalPages": number;
+    }
+    /**
+     * A circular progress indicator -- either a static ring showing a percentage sweep
+     * (`type="determinate"`) or a continuously spinning ring signaling in-progress work with no known
+     * completion percentage (`type="indeterminate"`).
+     * ## When to use
+     * - Showing the progress of a task with a known, quantifiable completion percentage (`determinate`).
+     * - Signaling that work is happening in the background with no meaningful percentage to report
+     *   (`indeterminate`), e.g. while waiting on a network response.
+     * ## When not to use
+     * - For a horizontal, bar-shaped progress indicator -- this component is a ring, not a bar.
+     * - For a percentage that's better expressed as plain text, without the reserved space and visual
+     *   weight of a ring.
+     */
+    interface BsProgress {
+        /**
+          * Shows the `${value}%` label below the ring. Only takes effect for `type="determinate"` -- `indeterminate` never shows a label regardless of this prop, since there's no percentage to show. Defaults to `true`.
+          * @default true
+         */
+        "showLabel": boolean;
+        /**
+          * Overall diameter: `small` (44px), `medium` (48px), or `large` (64px).
+          * @default 'small'
+         */
+        "size": BsProgressSize;
+        /**
+          * Ring stroke width in px -- `4` or `8`, matching Figma's two stroke-width variants. A number, not the Figma label's literal `"4 px"` string.
+          * @default 4
+         */
+        "strokeWidth": BsProgressStrokeWidth;
+        /**
+          * `determinate` renders a static arc sweep reflecting `value` (with an optional percentage label); `indeterminate` renders a continuously spinning ring and never shows a label, since there's no known percentage to report.
+          * @default 'determinate'
+         */
+        "type": BsProgressType;
+        /**
+          * Progress percentage, `0`-`100`. Only meaningful for `type="determinate"` -- ignored (and never rendered) for `type="indeterminate"`. Out-of-range values are clamped defensively.
+          * @default 0
+         */
+        "value": number;
+    }
+    /**
+     * A linear (horizontal) progress indicator -- either a static bar showing a percentage fill
+     * (`type="determinate"`) or a continuously sliding bar signaling in-progress work with no known
+     * completion percentage (`type="indeterminate"`).
+     * ## When to use
+     * - Showing the progress of a task with a known, quantifiable completion percentage (`determinate`),
+     *   e.g. a file upload.
+     * - Signaling that work is happening in the background with no meaningful percentage to report
+     *   (`indeterminate`), e.g. while waiting on a network response.
+     * ## When not to use
+     * - For a compact, ring-shaped progress indicator -- use `bs-progress` (circular) instead.
+     * - For a percentage that's better expressed as plain text, without the reserved space and visual
+     *   weight of a bar.
+     */
+    interface BsProgressLinear {
+        /**
+          * Shows the slotted label below the bar. When `false`, or when no content is slotted, the label wrapper isn't rendered at all. Defaults to `true`.
+          * @default true
+         */
+        "showLabel": boolean;
+        /**
+          * Bar height: `small` (4px) or `large` (8px).
+          * @default 'large'
+         */
+        "size": BsProgressLinearSize;
+        /**
+          * `determinate` renders a static fill reflecting `value`; `indeterminate` renders a continuously sliding gradient bar and ignores `value`.
+          * @default 'determinate'
+         */
+        "type": BsProgressLinearType;
+        /**
+          * Progress percentage, `0`-`100`. Only meaningful for `type="determinate"` -- ignored (and never rendered) for `type="indeterminate"`. Out-of-range values are clamped defensively.
+          * @default 0
+         */
+        "value": number;
     }
     /**
      * A single radio button with its label, for one mutually-exclusive choice within a group.
@@ -3398,6 +3478,45 @@ declare global {
         prototype: HTMLBsPaginationElement;
         new (): HTMLBsPaginationElement;
     };
+    /**
+     * A circular progress indicator -- either a static ring showing a percentage sweep
+     * (`type="determinate"`) or a continuously spinning ring signaling in-progress work with no known
+     * completion percentage (`type="indeterminate"`).
+     * ## When to use
+     * - Showing the progress of a task with a known, quantifiable completion percentage (`determinate`).
+     * - Signaling that work is happening in the background with no meaningful percentage to report
+     *   (`indeterminate`), e.g. while waiting on a network response.
+     * ## When not to use
+     * - For a horizontal, bar-shaped progress indicator -- this component is a ring, not a bar.
+     * - For a percentage that's better expressed as plain text, without the reserved space and visual
+     *   weight of a ring.
+     */
+    interface HTMLBsProgressElement extends Components.BsProgress, HTMLStencilElement {
+    }
+    var HTMLBsProgressElement: {
+        prototype: HTMLBsProgressElement;
+        new (): HTMLBsProgressElement;
+    };
+    /**
+     * A linear (horizontal) progress indicator -- either a static bar showing a percentage fill
+     * (`type="determinate"`) or a continuously sliding bar signaling in-progress work with no known
+     * completion percentage (`type="indeterminate"`).
+     * ## When to use
+     * - Showing the progress of a task with a known, quantifiable completion percentage (`determinate`),
+     *   e.g. a file upload.
+     * - Signaling that work is happening in the background with no meaningful percentage to report
+     *   (`indeterminate`), e.g. while waiting on a network response.
+     * ## When not to use
+     * - For a compact, ring-shaped progress indicator -- use `bs-progress` (circular) instead.
+     * - For a percentage that's better expressed as plain text, without the reserved space and visual
+     *   weight of a bar.
+     */
+    interface HTMLBsProgressLinearElement extends Components.BsProgressLinear, HTMLStencilElement {
+    }
+    var HTMLBsProgressLinearElement: {
+        prototype: HTMLBsProgressLinearElement;
+        new (): HTMLBsProgressLinearElement;
+    };
     interface HTMLBsRadioElementEventMap {
         "bsChange": string;
     }
@@ -3769,6 +3888,8 @@ declare global {
         "bs-navigation-drawer-item": HTMLBsNavigationDrawerItemElement;
         "bs-navigation-header": HTMLBsNavigationHeaderElement;
         "bs-pagination": HTMLBsPaginationElement;
+        "bs-progress": HTMLBsProgressElement;
+        "bs-progress-linear": HTMLBsProgressLinearElement;
         "bs-radio": HTMLBsRadioElement;
         "bs-slider": HTMLBsSliderElement;
         "bs-snackbar": HTMLBsSnackbarElement;
@@ -5494,6 +5615,82 @@ declare namespace LocalJSX {
         "totalPages"?: number;
     }
     /**
+     * A circular progress indicator -- either a static ring showing a percentage sweep
+     * (`type="determinate"`) or a continuously spinning ring signaling in-progress work with no known
+     * completion percentage (`type="indeterminate"`).
+     * ## When to use
+     * - Showing the progress of a task with a known, quantifiable completion percentage (`determinate`).
+     * - Signaling that work is happening in the background with no meaningful percentage to report
+     *   (`indeterminate`), e.g. while waiting on a network response.
+     * ## When not to use
+     * - For a horizontal, bar-shaped progress indicator -- this component is a ring, not a bar.
+     * - For a percentage that's better expressed as plain text, without the reserved space and visual
+     *   weight of a ring.
+     */
+    interface BsProgress {
+        /**
+          * Shows the `${value}%` label below the ring. Only takes effect for `type="determinate"` -- `indeterminate` never shows a label regardless of this prop, since there's no percentage to show. Defaults to `true`.
+          * @default true
+         */
+        "showLabel"?: boolean;
+        /**
+          * Overall diameter: `small` (44px), `medium` (48px), or `large` (64px).
+          * @default 'small'
+         */
+        "size"?: BsProgressSize;
+        /**
+          * Ring stroke width in px -- `4` or `8`, matching Figma's two stroke-width variants. A number, not the Figma label's literal `"4 px"` string.
+          * @default 4
+         */
+        "strokeWidth"?: BsProgressStrokeWidth;
+        /**
+          * `determinate` renders a static arc sweep reflecting `value` (with an optional percentage label); `indeterminate` renders a continuously spinning ring and never shows a label, since there's no known percentage to report.
+          * @default 'determinate'
+         */
+        "type"?: BsProgressType;
+        /**
+          * Progress percentage, `0`-`100`. Only meaningful for `type="determinate"` -- ignored (and never rendered) for `type="indeterminate"`. Out-of-range values are clamped defensively.
+          * @default 0
+         */
+        "value"?: number;
+    }
+    /**
+     * A linear (horizontal) progress indicator -- either a static bar showing a percentage fill
+     * (`type="determinate"`) or a continuously sliding bar signaling in-progress work with no known
+     * completion percentage (`type="indeterminate"`).
+     * ## When to use
+     * - Showing the progress of a task with a known, quantifiable completion percentage (`determinate`),
+     *   e.g. a file upload.
+     * - Signaling that work is happening in the background with no meaningful percentage to report
+     *   (`indeterminate`), e.g. while waiting on a network response.
+     * ## When not to use
+     * - For a compact, ring-shaped progress indicator -- use `bs-progress` (circular) instead.
+     * - For a percentage that's better expressed as plain text, without the reserved space and visual
+     *   weight of a bar.
+     */
+    interface BsProgressLinear {
+        /**
+          * Shows the slotted label below the bar. When `false`, or when no content is slotted, the label wrapper isn't rendered at all. Defaults to `true`.
+          * @default true
+         */
+        "showLabel"?: boolean;
+        /**
+          * Bar height: `small` (4px) or `large` (8px).
+          * @default 'large'
+         */
+        "size"?: BsProgressLinearSize;
+        /**
+          * `determinate` renders a static fill reflecting `value`; `indeterminate` renders a continuously sliding gradient bar and ignores `value`.
+          * @default 'determinate'
+         */
+        "type"?: BsProgressLinearType;
+        /**
+          * Progress percentage, `0`-`100`. Only meaningful for `type="determinate"` -- ignored (and never rendered) for `type="indeterminate"`. Out-of-range values are clamped defensively.
+          * @default 0
+         */
+        "value"?: number;
+    }
+    /**
      * A single radio button with its label, for one mutually-exclusive choice within a group.
      * ## When to use
      * - One option within a set of mutually-exclusive choices, where all options should stay visible
@@ -6173,6 +6370,19 @@ declare namespace LocalJSX {
         "previousLabel": string;
         "nextLabel": string;
     }
+    interface BsProgressAttributes {
+        "type": BsProgressType;
+        "size": BsProgressSize;
+        "strokeWidth": BsProgressStrokeWidth;
+        "value": number;
+        "showLabel": boolean;
+    }
+    interface BsProgressLinearAttributes {
+        "type": BsProgressLinearType;
+        "size": BsProgressLinearSize;
+        "value": number;
+        "showLabel": boolean;
+    }
     interface BsRadioAttributes {
         "name": string;
         "value": string;
@@ -6280,6 +6490,8 @@ declare namespace LocalJSX {
         "bs-navigation-drawer-item": Omit<BsNavigationDrawerItem, keyof BsNavigationDrawerItemAttributes> & { [K in keyof BsNavigationDrawerItem & keyof BsNavigationDrawerItemAttributes]?: BsNavigationDrawerItem[K] } & { [K in keyof BsNavigationDrawerItem & keyof BsNavigationDrawerItemAttributes as `attr:${K}`]?: BsNavigationDrawerItemAttributes[K] } & { [K in keyof BsNavigationDrawerItem & keyof BsNavigationDrawerItemAttributes as `prop:${K}`]?: BsNavigationDrawerItem[K] };
         "bs-navigation-header": Omit<BsNavigationHeader, keyof BsNavigationHeaderAttributes> & { [K in keyof BsNavigationHeader & keyof BsNavigationHeaderAttributes]?: BsNavigationHeader[K] } & { [K in keyof BsNavigationHeader & keyof BsNavigationHeaderAttributes as `attr:${K}`]?: BsNavigationHeaderAttributes[K] } & { [K in keyof BsNavigationHeader & keyof BsNavigationHeaderAttributes as `prop:${K}`]?: BsNavigationHeader[K] };
         "bs-pagination": Omit<BsPagination, keyof BsPaginationAttributes> & { [K in keyof BsPagination & keyof BsPaginationAttributes]?: BsPagination[K] } & { [K in keyof BsPagination & keyof BsPaginationAttributes as `attr:${K}`]?: BsPaginationAttributes[K] } & { [K in keyof BsPagination & keyof BsPaginationAttributes as `prop:${K}`]?: BsPagination[K] };
+        "bs-progress": Omit<BsProgress, keyof BsProgressAttributes> & { [K in keyof BsProgress & keyof BsProgressAttributes]?: BsProgress[K] } & { [K in keyof BsProgress & keyof BsProgressAttributes as `attr:${K}`]?: BsProgressAttributes[K] } & { [K in keyof BsProgress & keyof BsProgressAttributes as `prop:${K}`]?: BsProgress[K] };
+        "bs-progress-linear": Omit<BsProgressLinear, keyof BsProgressLinearAttributes> & { [K in keyof BsProgressLinear & keyof BsProgressLinearAttributes]?: BsProgressLinear[K] } & { [K in keyof BsProgressLinear & keyof BsProgressLinearAttributes as `attr:${K}`]?: BsProgressLinearAttributes[K] } & { [K in keyof BsProgressLinear & keyof BsProgressLinearAttributes as `prop:${K}`]?: BsProgressLinear[K] };
         "bs-radio": Omit<BsRadio, keyof BsRadioAttributes> & { [K in keyof BsRadio & keyof BsRadioAttributes]?: BsRadio[K] } & { [K in keyof BsRadio & keyof BsRadioAttributes as `attr:${K}`]?: BsRadioAttributes[K] } & { [K in keyof BsRadio & keyof BsRadioAttributes as `prop:${K}`]?: BsRadio[K] };
         "bs-slider": Omit<BsSlider, keyof BsSliderAttributes> & { [K in keyof BsSlider & keyof BsSliderAttributes]?: BsSlider[K] } & { [K in keyof BsSlider & keyof BsSliderAttributes as `attr:${K}`]?: BsSliderAttributes[K] } & { [K in keyof BsSlider & keyof BsSliderAttributes as `prop:${K}`]?: BsSlider[K] };
         "bs-snackbar": Omit<BsSnackbar, keyof BsSnackbarAttributes> & { [K in keyof BsSnackbar & keyof BsSnackbarAttributes]?: BsSnackbar[K] } & { [K in keyof BsSnackbar & keyof BsSnackbarAttributes as `attr:${K}`]?: BsSnackbarAttributes[K] } & { [K in keyof BsSnackbar & keyof BsSnackbarAttributes as `prop:${K}`]?: BsSnackbar[K] };
@@ -7135,6 +7347,35 @@ declare module "@stencil/core" {
              *   plain prev/next controls (no numbers) are simpler there.
              */
             "bs-pagination": LocalJSX.IntrinsicElements["bs-pagination"] & JSXBase.HTMLAttributes<HTMLBsPaginationElement>;
+            /**
+             * A circular progress indicator -- either a static ring showing a percentage sweep
+             * (`type="determinate"`) or a continuously spinning ring signaling in-progress work with no known
+             * completion percentage (`type="indeterminate"`).
+             * ## When to use
+             * - Showing the progress of a task with a known, quantifiable completion percentage (`determinate`).
+             * - Signaling that work is happening in the background with no meaningful percentage to report
+             *   (`indeterminate`), e.g. while waiting on a network response.
+             * ## When not to use
+             * - For a horizontal, bar-shaped progress indicator -- this component is a ring, not a bar.
+             * - For a percentage that's better expressed as plain text, without the reserved space and visual
+             *   weight of a ring.
+             */
+            "bs-progress": LocalJSX.IntrinsicElements["bs-progress"] & JSXBase.HTMLAttributes<HTMLBsProgressElement>;
+            /**
+             * A linear (horizontal) progress indicator -- either a static bar showing a percentage fill
+             * (`type="determinate"`) or a continuously sliding bar signaling in-progress work with no known
+             * completion percentage (`type="indeterminate"`).
+             * ## When to use
+             * - Showing the progress of a task with a known, quantifiable completion percentage (`determinate`),
+             *   e.g. a file upload.
+             * - Signaling that work is happening in the background with no meaningful percentage to report
+             *   (`indeterminate`), e.g. while waiting on a network response.
+             * ## When not to use
+             * - For a compact, ring-shaped progress indicator -- use `bs-progress` (circular) instead.
+             * - For a percentage that's better expressed as plain text, without the reserved space and visual
+             *   weight of a bar.
+             */
+            "bs-progress-linear": LocalJSX.IntrinsicElements["bs-progress-linear"] & JSXBase.HTMLAttributes<HTMLBsProgressLinearElement>;
             /**
              * A single radio button with its label, for one mutually-exclusive choice within a group.
              * ## When to use

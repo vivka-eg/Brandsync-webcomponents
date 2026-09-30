@@ -1,0 +1,100 @@
+import { Meta, Canvas, Controls } from '@storybook/addon-docs/blocks';
+import * as ProgressStories from './bs-progress.stories';
+
+<Meta of={ProgressStories} />
+
+# Progress
+
+## Table of Contents
+
+- [Overview](#overview)
+- [Sizes](#sizes)
+- [Stroke widths](#stroke-widths)
+- [Values](#values)
+- [Without label](#without-label)
+- [Indeterminate](#indeterminate)
+- [Component API](#component-api)
+- [Accessibility](#accessibility)
+
+## Overview
+
+A circular progress indicator -- either a static ring showing a percentage sweep
+(`type="determinate"`) or a continuously spinning ring signaling in-progress work with no known
+completion percentage (`type="indeterminate"`).
+
+**When to use**
+- Showing the progress of a task with a known, quantifiable completion percentage (`determinate`).
+- Signaling that work is happening in the background with no meaningful percentage to report
+  (`indeterminate`), e.g. while waiting on a network response.
+
+**When not to use**
+- For a horizontal, bar-shaped progress indicator -- this component is a ring, not a bar.
+- For a percentage that's better expressed as plain text, without the reserved space and visual
+  weight of a ring.
+
+<Canvas of={ProgressStories.Default} />
+
+## Sizes
+
+`size` covers `small` (44px), `medium` (48px), and `large` (64px) -- the three fixed diameters from
+the Figma spec.
+
+<Canvas of={ProgressStories.Sizes} />
+
+## Stroke widths
+
+`stroke-width` is `4` or `8` (a number, not the Figma label's literal `"4 px"` string). Shown here
+at `size="large"` so the difference in ring thickness is easy to see.
+
+<Canvas of={ProgressStories.StrokeWidths} />
+
+## Values
+
+`value` (`0`-`100`) drives the arc's sweep for `type="determinate"`. Out-of-range values (e.g.
+`150` or `-10`) are clamped defensively rather than rendering an invalid sweep or a negative
+`stroke-dashoffset`.
+
+<Canvas of={ProgressStories.Values} />
+
+## Without label
+
+`show-label` (default `true`) can be set to `false` to render just the ring, no percentage text --
+only meaningful for `type="determinate"`, since `indeterminate` never shows a label regardless of
+this prop (there's no percentage to report).
+
+<Canvas of={ProgressStories.WithoutLabel} />
+
+## Indeterminate
+
+`type="indeterminate"` renders a continuously spinning ring instead of a value-driven sweep, and
+never shows a label. The spin is a real SVG arc (`stroke-dasharray`/`stroke-dashoffset` plus a CSS
+rotation), not a CSS border trick, so the stroke width and round linecaps match the determinate
+ring's rendering exactly.
+
+<Canvas of={ProgressStories.Indeterminate} />
+
+## Component API
+
+<Controls of={ProgressStories.Default} />
+
+**Customization surface** (see `CONVENTIONS.md` in the repo root for the full convention):
+- Slots: none -- the label is always the computed `${value}%`, never consumer-supplied content.
+- Shadow parts: `::part(container)`, `::part(track)`, `::part(arc)`, `::part(label)`
+- CSS Custom Properties: `--bs-progress-gap`, `--bs-progress-track`, `--bs-progress-arc`,
+  `--bs-progress-label-color`, `--bs-progress-label-font-size-sm`,
+  `--bs-progress-label-line-height-sm`, `--bs-progress-label-font-size-lg`,
+  `--bs-progress-label-line-height-lg`, `--bs-progress-label-font-weight`,
+  `--bs-progress-spin-duration` -- see `bs-progress.css`'s header block for what each aliases to.
+
+## Accessibility
+
+- The ring itself carries `role="progressbar"`. For `type="determinate"`, `aria-valuemin="0"`,
+  `aria-valuemax="100"`, and `aria-valuenow` (the clamped value) are all set -- the standard
+  progressbar-with-a-known-value pattern.
+- For `type="indeterminate"`, `aria-valuenow` is intentionally omitted (there's no known percentage
+  to report) and `aria-busy="true"` is set instead -- the standard progressbar-without-a-known-value
+  pattern, rather than faking a `0` or `100` value.
+- The indeterminate spin respects `prefers-reduced-motion: reduce` by slowing to a low-frequency
+  pulse (4x the normal duration) rather than freezing entirely -- freezing would remove the only
+  visual signal that work is still in progress, since indeterminate never has a label to fall back
+  on.

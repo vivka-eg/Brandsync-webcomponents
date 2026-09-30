@@ -39,6 +39,8 @@ export const DIRECTIVES = [
   d.BsNavigationDrawerItem,
   d.BsNavigationHeader,
   d.BsPagination,
+  d.BsProgress,
+  d.BsProgressLinear,
   d.BsRadio,
   d.BsSlider,
   d.BsSnackbar,

@@ -1,0 +1,119 @@
+/**
+ * @prop --bs-progress-gap: Gap between the ring and the label. Aliased to --bs-spacing-100.
+ * @prop --bs-progress-track: Track circle color (background ring). Aliased to --bs-neutral-200.
+ * @prop --bs-progress-arc: Arc/spinner circle color. Aliased to --bs-color-primary-default (the
+ *   same brand-blue accent bs-button's primary variant uses).
+ * @prop --bs-progress-label-color: Percentage label text color. Aliased to --bs-color-primary-default.
+ * @prop --bs-progress-label-font-size-sm: Label font size, size="small"/"medium". Aliased to --bs-fontsize-caption-md.
+ * @prop --bs-progress-label-line-height-sm: Label line height, size="small"/"medium". Aliased to --bs-line-height-caption-md.
+ * @prop --bs-progress-label-font-size-lg: Label font size, size="large". Aliased to --bs-fontsize-body-md.
+ * @prop --bs-progress-label-line-height-lg: Label line height, size="large". Aliased to --bs-line-height-body-md.
+ * @prop --bs-progress-label-font-weight: Label font weight. Aliased to --bs-font-weight-medium.
+ * @prop --bs-progress-spin-duration: Indeterminate spin duration. Aliased to --bs-duration-slower
+ *   if defined by brandsync-tokens, otherwise a plain 1.4s fallback.
+ */
+:host {
+  display: inline-flex;
+
+  --bs-progress-gap: var(--bs-spacing-100);
+  --bs-progress-track: var(--bs-neutral-200);
+  --bs-progress-arc: var(--bs-color-primary-default);
+  --bs-progress-label-color: var(--bs-color-primary-default);
+  --bs-progress-label-font-size-sm: var(--bs-fontsize-caption-md);
+  --bs-progress-label-line-height-sm: var(--bs-line-height-caption-md);
+  --bs-progress-label-font-size-lg: var(--bs-fontsize-body-md);
+  --bs-progress-label-line-height-lg: var(--bs-line-height-body-md);
+  --bs-progress-label-font-weight: var(--bs-font-weight-medium);
+  --bs-progress-spin-duration: 1.4s;
+}
+
+.bs-progress {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--bs-progress-gap);
+  font-family: inherit;
+}
+
+.bs-progress__box {
+  position: relative;
+  display: inline-flex;
+}
+
+.bs-progress__ring {
+  /* SVG rings are drawn starting at 3 o'clock by default -- rotate -90deg so the determinate
+     sweep starts at 12 o'clock, matching the Figma spec. */
+  transform: rotate(-90deg);
+  overflow: visible;
+}
+
+.bs-progress__track {
+  stroke: var(--bs-progress-track);
+}
+
+.bs-progress__arc {
+  stroke: var(--bs-progress-arc);
+  transition: stroke-dashoffset 0.3s ease;
+}
+
+/* Indeterminate: Figma's ring is a fading "comet tail" (transparent -> solid color) sweeping
+   around with a visible gap, not a flat-colored partial arc -- SVG has no angular/conic gradient
+   primitive, so this uses a CSS conic-gradient (color varies by angle) for the fade, masked down
+   from a solid disc to a ring of exactly `strokeWidth` via a radial-gradient mask, then rotated
+   continuously. `--bs-progress-spinner-stroke-width`/`--bs-progress-spinner-sweep` are set
+   per-instance inline (they depend on the `strokeWidth` prop). */
+.bs-progress__spinner {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background: conic-gradient(from 0deg, transparent 0deg, var(--bs-progress-arc) var(--bs-progress-spinner-sweep), transparent var(--bs-progress-spinner-sweep));
+  -webkit-mask: radial-gradient(
+    farthest-side,
+    transparent calc(100% - var(--bs-progress-spinner-stroke-width) - 1px),
+    #000 calc(100% - var(--bs-progress-spinner-stroke-width))
+  );
+  mask: radial-gradient(
+    farthest-side,
+    transparent calc(100% - var(--bs-progress-spinner-stroke-width) - 1px),
+    #000 calc(100% - var(--bs-progress-spinner-stroke-width))
+  );
+  animation: bs-progress-spin var(--bs-progress-spin-duration) linear infinite;
+}
+
+@keyframes bs-progress-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Reduced motion: freezing the spin entirely would remove the only visual signal that work is
+   still in progress (there's no label for indeterminate to fall back on), so this slows the
+   rotation to a slow, low-frequency pulse instead of stopping it -- still obviously "in progress"
+   without being motion-sickness-inducing. Same intent as bs-snackbar's spinner, applied as a
+   duration change rather than `animation: none` since indeterminate has no static fallback state
+   to freeze on. */
+@media (prefers-reduced-motion: reduce) {
+  .bs-progress__spinner {
+    animation-duration: calc(var(--bs-progress-spin-duration) * 4);
+  }
+}
+
+.bs-progress__label {
+  color: var(--bs-progress-label-color);
+  font-weight: var(--bs-progress-label-font-weight);
+  text-align: center;
+}
+
+.bs-progress__label--small,
+.bs-progress__label--medium {
+  font-size: var(--bs-progress-label-font-size-sm);
+  line-height: calc(var(--bs-progress-label-line-height-sm) * 1px);
+}
+
+.bs-progress__label--large {
+  font-size: var(--bs-progress-label-font-size-lg);
+  line-height: calc(var(--bs-progress-label-line-height-lg) * 1px);
+}
