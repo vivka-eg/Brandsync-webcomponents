@@ -86,10 +86,10 @@ export class BsAccordion {
               </slot>
             </span>
           )}
-          <span part="label" class="bs-accordion__label">
+          <span part="label" class={`bs-accordion__label ${this.showIcon ? '' : 'bs-accordion__label--no-icon'}`}>
             <slot name="label"></slot>
           </span>
-          <span part="caret" class="bs-accordion__caret" aria-hidden="true">
+          <span part="caret" class={`bs-accordion__caret bs-accordion__caret--${this.size}`} aria-hidden="true">
             {this.expanded ? <CaretUpIcon /> : <CaretDownIcon />}
           </span>
         </button>

@@ -26,17 +26,23 @@ const meta: Meta<BsAccordionArgs> = {
   title: 'Components/bs-accordion',
   parameters: { docs: { description: { component: componentDescription('bs-accordion') } } },
   render: args => html`
-    <bs-accordion
-      ?expanded=${args.expanded}
-      size=${args.size}
-      ?disabled=${args.disabled}
-      ?show-icon=${args.showIcon}
-      ?show-preview=${args.showPreview}
-      @bsToggle=${echoToggle}
-    >
-      <span slot="label">${args.label}</span>
-      ${args.content}
-    </bs-accordion>
+    <!-- Figma's spec is a fixed 486px-wide component -- matching that width here (instead of
+    letting it stretch to the full canvas) is what makes the collapsed state's single-line
+    ellipsis truncation actually visible; at full canvas width the preview text never overflows,
+    so collapsed and expanded look identical even though the truncation CSS is correctly wired. -->
+    <div style="max-width: 486px;">
+      <bs-accordion
+        ?expanded=${args.expanded}
+        size=${args.size}
+        ?disabled=${args.disabled}
+        ?show-icon=${args.showIcon}
+        ?show-preview=${args.showPreview}
+        @bsToggle=${echoToggle}
+      >
+        <span slot="label">${args.label}</span>
+        ${args.content}
+      </bs-accordion>
+    </div>
   `,
   argTypes: {
     expanded: { control: 'boolean', description: propDescription('bs-accordion', 'expanded') },

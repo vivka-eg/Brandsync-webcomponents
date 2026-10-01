@@ -50,6 +50,35 @@
   font-family: inherit;
 }
 
+/* Hover/pressed/focus-visible highlight the WHOLE item (header + content together), not just the
+   header button -- confirmed against Figma's own Focused variant, whose background spans both.
+   Applied on the outer container via :has() rather than on .bs-accordion__header directly, so the
+   content area underneath shares the same tint instead of staying white/visually disconnected
+   from a highlighted header. */
+.bs-accordion:has(.bs-accordion__header:hover),
+.bs-accordion:has(.bs-accordion__header:active) {
+  background: var(--bs-accordion-bg-hover);
+}
+
+.bs-accordion:has(.bs-accordion__header:focus-visible) {
+  background: var(--bs-accordion-bg-hover);
+  outline: 2px solid var(--bs-accordion-focus-ring);
+  outline-offset: 2px;
+  /* Ring radius = component radius + 2px, so the ring visually hugs the component's own rounded
+     corners instead of looking squared-off relative to them. */
+  border-radius: calc(var(--bs-accordion-radius) + 2px);
+}
+
+/* No horizontal padding here -- per Figma, the leading icon box and trailing caret box (both
+   fixed-width, see .bs-accordion__icon/.bs-accordion__caret below) ARE the left/right inset on
+   their own; adding header-level padding on top of the icon box would double it up. The no-icon
+   case's left inset is handled on .bs-accordion__label directly instead (see below), since
+   there's no icon box there to provide it. */
+/* No border-radius here -- the outer .bs-accordion container already clips both the header and
+   content to rounded corners via its own border-radius + overflow:hidden. Rounding the header
+   itself too created a visible seam: its own bottom corners would round off against the square
+   top corners of the content area sitting directly below it, whenever both are visible together
+   (e.g. expanded + hovered). */
 .bs-accordion__header {
   display: flex;
   align-items: center;
@@ -57,11 +86,16 @@
   border: none;
   background: transparent;
   color: var(--bs-accordion-text-default);
-  padding: 0 var(--bs-accordion-header-padding-x);
+  padding: 0;
   cursor: pointer;
   font-family: inherit;
   text-align: left;
-  border-radius: var(--bs-accordion-radius);
+}
+
+/* The focus-visible ring is drawn on the outer .bs-accordion container (see above), not here --
+   suppress the button's own native focus ring so there's exactly one ring, not two. */
+.bs-accordion__header:focus-visible {
+  outline: none;
 }
 
 .bs-accordion__header--medium {
@@ -72,26 +106,6 @@
 .bs-accordion__header--large {
   padding-top: var(--bs-accordion-header-padding-y-large);
   padding-bottom: var(--bs-accordion-header-padding-y-large);
-}
-
-/* Icon=No: no icon box reserving space on the left -- the label gets the symmetric padding
-   directly, confirmed against Figma's Icon=No variant. */
-.bs-accordion__header--no-icon {
-  padding-left: var(--bs-accordion-header-padding-x);
-}
-
-.bs-accordion__header:hover,
-.bs-accordion__header:active {
-  background: var(--bs-accordion-bg-hover);
-}
-
-.bs-accordion__header:focus-visible {
-  background: var(--bs-accordion-bg-hover);
-  outline: 2px solid var(--bs-accordion-focus-ring);
-  outline-offset: -2px;
-  /* Ring radius = component radius + 2px, so the ring visually hugs the component's own rounded
-     corners instead of looking squared-off relative to them. */
-  border-radius: calc(var(--bs-accordion-radius) + 2px);
 }
 
 .bs-accordion__header:disabled {
@@ -131,12 +145,20 @@
   font-weight: var(--bs-accordion-font-weight);
 }
 
+/* Icon=No: no icon box on the left to provide the inset, so the label gets it directly --
+   confirmed against Figma's Icon=No variant. */
+.bs-accordion__label--no-icon {
+  padding-left: var(--bs-accordion-header-padding-x);
+}
+
+/* Same fixed-width/height box as .bs-accordion__icon (not just the 24px SVG) -- per Figma, the
+   trailing caret gets its own 64px-wide box exactly like the leading icon does, on BOTH sides
+   regardless of showIcon, not just generic header padding. Previously sized to only the SVG's
+   24px, which put the caret noticeably closer to the edge than the label's own spacing. */
 .bs-accordion__caret {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 24px;
-  height: 24px;
   flex-shrink: 0;
   color: inherit;
 }
@@ -144,6 +166,16 @@
 .bs-accordion__caret svg {
   width: 24px;
   height: 24px;
+}
+
+.bs-accordion__caret--medium {
+  width: var(--bs-accordion-icon-width-medium);
+  height: var(--bs-accordion-icon-height-medium);
+}
+
+.bs-accordion__caret--large {
+  width: var(--bs-accordion-icon-size-large);
+  height: var(--bs-accordion-icon-size-large);
 }
 
 .bs-accordion__content {
