@@ -1,5 +1,13 @@
 # @brandsync/angular
 
+## 1.5.2
+
+### Patch Changes
+
+- 5a321e2: No user-facing change -- this changeset exists solely to trigger a clean release cycle verifying the CI pipeline fixes (publish.sh's git-tag creation and 409-tolerance) and the new AI story-authoring step for `bs-accordion`.
+- Updated dependencies [5a321e2]
+  - @brandsync/wc@1.5.2
+
 ## 1.5.1
 
 ### Patch Changes
