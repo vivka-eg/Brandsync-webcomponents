@@ -6,6 +6,7 @@ import { ProxyCmp } from './angular-component-lib/utils';
 
 import type { Components } from '@brandsync/wc/dist/components';
 
+import { defineCustomElement as defineBsAccordion } from '@brandsync/wc/dist/components/bs-accordion.js';
 import { defineCustomElement as defineBsAiDisclaimer } from '@brandsync/wc/dist/components/bs-ai-disclaimer.js';
 import { defineCustomElement as defineBsAiGreeting } from '@brandsync/wc/dist/components/bs-ai-greeting.js';
 import { defineCustomElement as defineBsAiThinking } from '@brandsync/wc/dist/components/bs-ai-thinking.js';
@@ -56,6 +57,39 @@ import { defineCustomElement as defineBsTab } from '@brandsync/wc/dist/component
 import { defineCustomElement as defineBsTabs } from '@brandsync/wc/dist/components/bs-tabs.js';
 import { defineCustomElement as defineBsToast } from '@brandsync/wc/dist/components/bs-toast.js';
 import { defineCustomElement as defineBsTooltip } from '@brandsync/wc/dist/components/bs-tooltip.js';
+@ProxyCmp({
+  defineCustomElementFn: defineBsAccordion,
+  inputs: ['disabled', 'expanded', 'showIcon', 'showPreview', 'size']
+})
+@Component({
+  selector: 'bs-accordion',
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  template: '<ng-content></ng-content>',
+  // eslint-disable-next-line @angular-eslint/no-inputs-metadata-property
+  inputs: ['disabled', 'expanded', 'showIcon', 'showPreview', 'size'],
+  outputs: ['bsToggle'],
+})
+export class BsAccordion {
+  protected el: HTMLBsAccordionElement;
+  @Output() bsToggle = new EventEmitter<BsAccordionCustomEvent<boolean>>();
+  constructor(c: ChangeDetectorRef, r: ElementRef, protected z: NgZone) {
+    c.detach();
+    this.el = r.nativeElement;
+  }
+}
+
+
+import type { BsAccordionCustomEvent } from '@brandsync/wc/dist/components';
+
+export declare interface BsAccordion extends Components.BsAccordion {
+  /**
+   * Emitted when the header is activated (click, or Enter/Space while focused), with the
+REQUESTED new expanded value (`!expanded`). Never fires while `disabled`.
+   */
+  bsToggle: EventEmitter<BsAccordionCustomEvent<boolean>>;
+}
+
+
 @ProxyCmp({
   defineCustomElementFn: defineBsAiDisclaimer
 })

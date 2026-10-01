@@ -5,6 +5,7 @@
  * It contains typing information for all components that exist in this project.
  */
 import { HTMLStencilElement, JSXBase } from "@stencil/core/internal";
+import { BsAccordionSize } from "./components/bs-accordion/bs-accordion";
 import { BsAttachmentType } from "./components/bs-attachment/bs-attachment";
 import { BsAvatarSize, BsAvatarType } from "./components/bs-avatar/bs-avatar";
 import { BsBadgeVariant } from "./components/bs-badge/bs-badge";
@@ -36,6 +37,7 @@ import { BsSwitchSize } from "./components/bs-switch/bs-switch";
 import { BsTabIconPosition } from "./components/bs-tab/bs-tab/bs-tab";
 import { BsTabsOrientation, BsTabsType } from "./components/bs-tab/bs-tabs/bs-tabs";
 import { BsToastState } from "./components/bs-toast/bs-toast";
+export { BsAccordionSize } from "./components/bs-accordion/bs-accordion";
 export { BsAttachmentType } from "./components/bs-attachment/bs-attachment";
 export { BsAvatarSize, BsAvatarType } from "./components/bs-avatar/bs-avatar";
 export { BsBadgeVariant } from "./components/bs-badge/bs-badge";
@@ -68,6 +70,41 @@ export { BsTabIconPosition } from "./components/bs-tab/bs-tab/bs-tab";
 export { BsTabsOrientation, BsTabsType } from "./components/bs-tab/bs-tabs/bs-tabs";
 export { BsToastState } from "./components/bs-toast/bs-toast";
 export namespace Components {
+    /**
+     * A single collapsible section -- a clickable header (optional leading icon, label, trailing
+     * caret) that reveals or hides a body content area.
+     * This component renders exactly one section. A consumer stacks multiple `bs-accordion` elements
+     * (optionally managing which one(s) are expanded, e.g. "only one open at a time") themselves --
+     * there's no accordion-group wrapper here, matching Figma's component which only specs the single
+     * section, not a group behavior.
+     */
+    interface BsAccordion {
+        /**
+          * Disables the header: suppresses hover/focus/pressed styling, prevents toggling via click or keyboard, and removes it from the tab order.
+          * @default false
+         */
+        "disabled": boolean;
+        /**
+          * Whether the section is expanded. This is the single source of truth for the component's visual state -- a controlled component, like a controlled `<input>`. Clicking (or keyboard-activating) the header never mutates this prop itself; it only emits `bsToggle` with the requested new value. If the consumer doesn't echo the change back via this prop (e.g. some validation rejects it), the rendering stays exactly as `expanded` says, rather than drifting into an internally-tracked truth -- same lesson as bs-chip-filter's `selected` prop. Reflected so consumers can target `bs-accordion[expanded]` via CSS. NOT `mutable: true`.
+          * @default false
+         */
+        "expanded": boolean;
+        /**
+          * Shows the leading icon area (default Plus glyph, or the `icon` slot's content). When `false`, no icon box is reserved and the header/body padding tighten to the left edge.
+          * @default true
+         */
+        "showIcon": boolean;
+        /**
+          * When collapsed, renders the body content truncated to a single line (pure CSS truncation of the same slotted content, not different content) instead of rendering nothing. Has no effect while expanded -- the full content always renders then, regardless of this prop.
+          * @default true
+         */
+        "showPreview": boolean;
+        /**
+          * Sizing scale. Controls the leading icon box's dimensions and the header's vertical padding -- the body content area's padding stays constant across sizes, matching the Figma spec.
+          * @default 'medium'
+         */
+        "size": BsAccordionSize;
+    }
     /**
      * A centered caption disclaimer for Genie AI surfaces, e.g. "AI can make mistakes. Please verify
      * important information."
@@ -2117,6 +2154,10 @@ export namespace Components {
         "placement": 'top';
     }
 }
+export interface BsAccordionCustomEvent<T> extends CustomEvent<T> {
+    detail: T;
+    target: HTMLBsAccordionElement;
+}
 export interface BsAttachmentCustomEvent<T> extends CustomEvent<T> {
     detail: T;
     target: HTMLBsAttachmentElement;
@@ -2222,6 +2263,31 @@ export interface BsToastCustomEvent<T> extends CustomEvent<T> {
     target: HTMLBsToastElement;
 }
 declare global {
+    interface HTMLBsAccordionElementEventMap {
+        "bsToggle": boolean;
+    }
+    /**
+     * A single collapsible section -- a clickable header (optional leading icon, label, trailing
+     * caret) that reveals or hides a body content area.
+     * This component renders exactly one section. A consumer stacks multiple `bs-accordion` elements
+     * (optionally managing which one(s) are expanded, e.g. "only one open at a time") themselves --
+     * there's no accordion-group wrapper here, matching Figma's component which only specs the single
+     * section, not a group behavior.
+     */
+    interface HTMLBsAccordionElement extends Components.BsAccordion, HTMLStencilElement {
+        addEventListener<K extends keyof HTMLBsAccordionElementEventMap>(type: K, listener: (this: HTMLBsAccordionElement, ev: BsAccordionCustomEvent<HTMLBsAccordionElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLBsAccordionElementEventMap>(type: K, listener: (this: HTMLBsAccordionElement, ev: BsAccordionCustomEvent<HTMLBsAccordionElementEventMap[K]>) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
+    }
+    var HTMLBsAccordionElement: {
+        prototype: HTMLBsAccordionElement;
+        new (): HTMLBsAccordionElement;
+    };
     /**
      * A centered caption disclaimer for Genie AI surfaces, e.g. "AI can make mistakes. Please verify
      * important information."
@@ -3855,6 +3921,7 @@ declare global {
         new (): HTMLBsTooltipElement;
     };
     interface HTMLElementTagNameMap {
+        "bs-accordion": HTMLBsAccordionElement;
         "bs-ai-disclaimer": HTMLBsAiDisclaimerElement;
         "bs-ai-greeting": HTMLBsAiGreetingElement;
         "bs-ai-thinking": HTMLBsAiThinkingElement;
@@ -3908,6 +3975,45 @@ declare global {
     }
 }
 declare namespace LocalJSX {
+    /**
+     * A single collapsible section -- a clickable header (optional leading icon, label, trailing
+     * caret) that reveals or hides a body content area.
+     * This component renders exactly one section. A consumer stacks multiple `bs-accordion` elements
+     * (optionally managing which one(s) are expanded, e.g. "only one open at a time") themselves --
+     * there's no accordion-group wrapper here, matching Figma's component which only specs the single
+     * section, not a group behavior.
+     */
+    interface BsAccordion {
+        /**
+          * Disables the header: suppresses hover/focus/pressed styling, prevents toggling via click or keyboard, and removes it from the tab order.
+          * @default false
+         */
+        "disabled"?: boolean;
+        /**
+          * Whether the section is expanded. This is the single source of truth for the component's visual state -- a controlled component, like a controlled `<input>`. Clicking (or keyboard-activating) the header never mutates this prop itself; it only emits `bsToggle` with the requested new value. If the consumer doesn't echo the change back via this prop (e.g. some validation rejects it), the rendering stays exactly as `expanded` says, rather than drifting into an internally-tracked truth -- same lesson as bs-chip-filter's `selected` prop. Reflected so consumers can target `bs-accordion[expanded]` via CSS. NOT `mutable: true`.
+          * @default false
+         */
+        "expanded"?: boolean;
+        /**
+          * Emitted when the header is activated (click, or Enter/Space while focused), with the REQUESTED new expanded value (`!expanded`). Never fires while `disabled`.
+         */
+        "onBsToggle"?: (event: BsAccordionCustomEvent<boolean>) => void;
+        /**
+          * Shows the leading icon area (default Plus glyph, or the `icon` slot's content). When `false`, no icon box is reserved and the header/body padding tighten to the left edge.
+          * @default true
+         */
+        "showIcon"?: boolean;
+        /**
+          * When collapsed, renders the body content truncated to a single line (pure CSS truncation of the same slotted content, not different content) instead of rendering nothing. Has no effect while expanded -- the full content always renders then, regardless of this prop.
+          * @default true
+         */
+        "showPreview"?: boolean;
+        /**
+          * Sizing scale. Controls the leading icon box's dimensions and the header's vertical padding -- the body content area's padding stays constant across sizes, matching the Figma spec.
+          * @default 'medium'
+         */
+        "size"?: BsAccordionSize;
+    }
     /**
      * A centered caption disclaimer for Genie AI surfaces, e.g. "AI can make mistakes. Please verify
      * important information."
@@ -6162,6 +6268,13 @@ declare namespace LocalJSX {
         "placement"?: 'top';
     }
 
+    interface BsAccordionAttributes {
+        "expanded": boolean;
+        "size": BsAccordionSize;
+        "disabled": boolean;
+        "showIcon": boolean;
+        "showPreview": boolean;
+    }
     interface BsAiGreetingAttributes {
         "assistantName": string;
         "productName": string;
@@ -6457,6 +6570,7 @@ declare namespace LocalJSX {
     }
 
     interface IntrinsicElements {
+        "bs-accordion": Omit<BsAccordion, keyof BsAccordionAttributes> & { [K in keyof BsAccordion & keyof BsAccordionAttributes]?: BsAccordion[K] } & { [K in keyof BsAccordion & keyof BsAccordionAttributes as `attr:${K}`]?: BsAccordionAttributes[K] } & { [K in keyof BsAccordion & keyof BsAccordionAttributes as `prop:${K}`]?: BsAccordion[K] };
         "bs-ai-disclaimer": BsAiDisclaimer;
         "bs-ai-greeting": Omit<BsAiGreeting, keyof BsAiGreetingAttributes> & { [K in keyof BsAiGreeting & keyof BsAiGreetingAttributes]?: BsAiGreeting[K] } & { [K in keyof BsAiGreeting & keyof BsAiGreetingAttributes as `attr:${K}`]?: BsAiGreetingAttributes[K] } & { [K in keyof BsAiGreeting & keyof BsAiGreetingAttributes as `prop:${K}`]?: BsAiGreeting[K] };
         "bs-ai-thinking": Omit<BsAiThinking, keyof BsAiThinkingAttributes> & { [K in keyof BsAiThinking & keyof BsAiThinkingAttributes]?: BsAiThinking[K] } & { [K in keyof BsAiThinking & keyof BsAiThinkingAttributes as `attr:${K}`]?: BsAiThinkingAttributes[K] } & { [K in keyof BsAiThinking & keyof BsAiThinkingAttributes as `prop:${K}`]?: BsAiThinking[K] };
@@ -6513,6 +6627,15 @@ export { LocalJSX as JSX };
 declare module "@stencil/core" {
     export namespace JSX {
         interface IntrinsicElements {
+            /**
+             * A single collapsible section -- a clickable header (optional leading icon, label, trailing
+             * caret) that reveals or hides a body content area.
+             * This component renders exactly one section. A consumer stacks multiple `bs-accordion` elements
+             * (optionally managing which one(s) are expanded, e.g. "only one open at a time") themselves --
+             * there's no accordion-group wrapper here, matching Figma's component which only specs the single
+             * section, not a group behavior.
+             */
+            "bs-accordion": LocalJSX.IntrinsicElements["bs-accordion"] & JSXBase.HTMLAttributes<HTMLBsAccordionElement>;
             /**
              * A centered caption disclaimer for Genie AI surfaces, e.g. "AI can make mistakes. Please verify
              * important information."

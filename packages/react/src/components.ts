@@ -11,8 +11,9 @@ import type { EventName, StencilReactComponent } from '@stencil/react-output-tar
 import { createComponent } from '@stencil/react-output-target/runtime';
 import React from 'react';
 
-import { type BsAttachmentCustomEvent, type BsChatbotFeedbackCustomEvent, type BsChatbotHeaderCustomEvent, type BsChatbotResponseActionCustomEvent, type BsChatbotSourcesDrawerCustomEvent, type BsChatbotSuggestionButtonCustomEvent, type BsCheckboxCustomEvent, type BsChipFilterCustomEvent, type BsChipInputCustomEvent, type BsComposerCustomEvent, type BsComposerStatusBannerCustomEvent, type BsDataTableCustomEvent, type BsDialogCustomEvent, type BsInlineTabCustomEvent, type BsInputCustomEvent, type BsMenuItemCustomEvent, type BsNavigationDrawerCustomEvent, type BsNavigationDrawerItemCustomEvent, type BsPaginationCustomEvent, type BsRadioCustomEvent, type BsSliderCustomEvent, type BsSnackbarCustomEvent, type BsSourceLinkCustomEvent, type BsSwitchCustomEvent, type BsTabCustomEvent, type BsToastCustomEvent } from "@brandsync/wc";
+import { type BsAccordionCustomEvent, type BsAttachmentCustomEvent, type BsChatbotFeedbackCustomEvent, type BsChatbotHeaderCustomEvent, type BsChatbotResponseActionCustomEvent, type BsChatbotSourcesDrawerCustomEvent, type BsChatbotSuggestionButtonCustomEvent, type BsCheckboxCustomEvent, type BsChipFilterCustomEvent, type BsChipInputCustomEvent, type BsComposerCustomEvent, type BsComposerStatusBannerCustomEvent, type BsDataTableCustomEvent, type BsDialogCustomEvent, type BsInlineTabCustomEvent, type BsInputCustomEvent, type BsMenuItemCustomEvent, type BsNavigationDrawerCustomEvent, type BsNavigationDrawerItemCustomEvent, type BsPaginationCustomEvent, type BsRadioCustomEvent, type BsSliderCustomEvent, type BsSnackbarCustomEvent, type BsSourceLinkCustomEvent, type BsSwitchCustomEvent, type BsTabCustomEvent, type BsToastCustomEvent } from "@brandsync/wc";
 import type { Components } from "@brandsync/wc/dist/components";
+import { BsAccordion as BsAccordionElement, defineCustomElement as defineBsAccordion } from "@brandsync/wc/dist/components/bs-accordion.js";
 import { BsAiDisclaimer as BsAiDisclaimerElement, defineCustomElement as defineBsAiDisclaimer } from "@brandsync/wc/dist/components/bs-ai-disclaimer.js";
 import { BsAiGreeting as BsAiGreetingElement, defineCustomElement as defineBsAiGreeting } from "@brandsync/wc/dist/components/bs-ai-greeting.js";
 import { BsAiThinking as BsAiThinkingElement, defineCustomElement as defineBsAiThinking } from "@brandsync/wc/dist/components/bs-ai-thinking.js";
@@ -63,6 +64,17 @@ import { BsTab as BsTabElement, defineCustomElement as defineBsTab } from "@bran
 import { BsTabs as BsTabsElement, defineCustomElement as defineBsTabs } from "@brandsync/wc/dist/components/bs-tabs.js";
 import { BsToast as BsToastElement, defineCustomElement as defineBsToast } from "@brandsync/wc/dist/components/bs-toast.js";
 import { BsTooltip as BsTooltipElement, defineCustomElement as defineBsTooltip } from "@brandsync/wc/dist/components/bs-tooltip.js";
+
+export type BsAccordionEvents = { onBsToggle: EventName<BsAccordionCustomEvent<boolean>> };
+
+export const BsAccordion: StencilReactComponent<BsAccordionElement, BsAccordionEvents, Components.BsAccordion> = /*@__PURE__*/ createComponent<BsAccordionElement, BsAccordionEvents, Components.BsAccordion>({
+    tagName: 'bs-accordion',
+    elementClass: BsAccordionElement,
+    // @ts-ignore - ignore potential React type mismatches between the Stencil Output Target and your project.
+    react: React,
+    events: { onBsToggle: 'bsToggle' } as BsAccordionEvents,
+    defineCustomElement: defineBsAccordion
+});
 
 export type BsAiDisclaimerEvents = NonNullable<unknown>;
 

@@ -20,6 +20,7 @@ import '../src/global/index.css';
 // bundle correctly in both dev and static-build modes.
 //
 // Keep this list in sync with src/components/*/ -- add a line here for every new component.
+import '../dist/components/bs-accordion.js';
 import '../dist/components/bs-ai-disclaimer.js';
 import '../dist/components/bs-ai-greeting.js';
 import '../dist/components/bs-ai-thinking.js';

@@ -1,0 +1,112 @@
+import { Meta, Canvas, Controls } from '@storybook/addon-docs/blocks';
+import * as AccordionStories from './bs-accordion.stories';
+
+<Meta of={AccordionStories} />
+
+# Accordion
+
+## Table of Contents
+
+- [Overview](#overview)
+- [Expanded](#expanded)
+- [Large size](#large-size)
+- [No icon](#no-icon)
+- [No preview](#no-preview)
+- [Disabled](#disabled)
+- [Component API](#component-api)
+- [Events](#events)
+- [Accessibility](#accessibility)
+
+## Overview
+
+A single collapsible section -- a clickable header (optional leading icon, label, trailing caret)
+that reveals or hides a body content area.
+
+This component renders exactly one section. A consumer stacks multiple `bs-accordion` elements
+(optionally managing which one(s) are expanded, e.g. "only one open at a time") themselves --
+there's no accordion-group wrapper here, matching Figma's component which only specs the single
+section, not a group behavior.
+
+**When to use**
+- A section of content the user can choose to reveal or hide, especially when several such
+  sections are stacked together (FAQ, settings groups).
+
+**When not to use**
+- A single modal decision or confirmation -- use `bs-dialog`.
+- Tabbed content where only one panel is ever meaningful at a time and switching replaces (rather
+  than stacks) content -- use `bs-tabs`.
+
+<Canvas of={AccordionStories.Default} />
+
+## Expanded
+
+`expanded` is a controlled prop, not internal state -- clicking (or keyboard-activating) the
+header never flips it directly; the header only emits `bsToggle` with the requested value, and the
+consumer must echo it back via the `expanded` attribute/prop for the visual state to change (same
+pattern as `bs-chip-filter`'s `selected` prop). This story's render function does that echoing for
+you so the control actually works.
+
+<Canvas of={AccordionStories.Expanded} />
+
+## Large size
+
+`size="large"` grows the leading icon box to a 64px square (vs. medium's 64x48px) and increases
+the header's vertical padding -- the body content area's padding stays the same at both sizes.
+
+<Canvas of={AccordionStories.Large} />
+
+## No icon
+
+`showIcon="false"` omits the leading icon area entirely. The header and body content padding both
+tighten to a symmetric left/right value instead of reserving space for the icon box.
+
+<Canvas of={AccordionStories.NoIcon} />
+
+## No preview
+
+`showPreview="false"` renders no body content at all while collapsed (vs. the default: the same
+slotted content truncated to one line via CSS). Only affects the collapsed state -- expanding
+always shows the full content regardless of this prop.
+
+<Canvas of={AccordionStories.NoPreview} />
+
+## Disabled
+
+A real `disabled` prop, not just a visual dimming -- the header stops responding to click and
+keyboard activation and is removed from the tab order, and both the label and body content switch
+to the disabled text/background tokens.
+
+<Canvas of={AccordionStories.Disabled} />
+
+## Component API
+
+<Controls of={AccordionStories.Default} />
+
+**Customization surface** (see `CONVENTIONS.md` in the repo root for the full convention):
+- Slots: default (body content), `label` (header title), `icon` (overrides the default Plus glyph)
+- Shadow parts: `::part(container)`, `::part(header)`, `::part(icon)`, `::part(label)`,
+  `::part(caret)`, `::part(content)`
+- CSS Custom Properties: layout (`--bs-accordion-radius`, `--bs-accordion-header-padding-*`,
+  `--bs-accordion-content-padding-*`, `--bs-accordion-icon-*`, `--bs-accordion-font-*`) plus
+  color tokens per state (`--bs-accordion-text-default`, `--bs-accordion-bg-hover`,
+  `--bs-accordion-bg-disabled`, `--bs-accordion-text-disabled`, `--bs-accordion-focus-ring`) --
+  see `bs-accordion.css`'s header block for what each aliases to.
+
+## Events
+
+| Event | Fires when | Payload | Cancelable |
+| --- | --- | --- | --- |
+| `bsToggle` | The header is clicked, or activated via Enter/Space while focused (never while `disabled`) | `boolean` -- the requested new `expanded` value | No |
+
+## Accessibility
+
+- The header is a native `<button>`, giving it click, keyboard activation (Enter/Space), and
+  `disabled` semantics (not focusable, no events) for free, rather than hand-rolling a
+  `role="button"` div.
+- `aria-expanded` on the header reflects the live `expanded` prop.
+- The leading icon and caret are `aria-hidden` -- the label text (via the `label` slot) is what
+  gives the header its accessible name.
+- Known gap: there's no built-in `id`/`aria-controls` wiring between the header and the body
+  content region, since the body isn't a separate focusable landmark in Figma's spec -- a consumer
+  needing that relationship exposed to assistive tech more explicitly would need to add it
+  themselves (e.g. via `aria-describedby` on the host).

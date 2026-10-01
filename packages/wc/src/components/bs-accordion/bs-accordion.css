@@ -1,0 +1,174 @@
+/**
+ * @prop --bs-accordion-radius: Corner radius of the whole component. Aliased to --bs-border-radius-100.
+ * @prop --bs-accordion-header-padding-y-medium: Header vertical padding, size="medium". Aliased to --bs-spacing-150.
+ * @prop --bs-accordion-header-padding-y-large: Header vertical padding, size="large". Aliased to --bs-spacing-250.
+ * @prop --bs-accordion-header-padding-x: Header horizontal padding (both edges, Icon=Yes). Aliased to --bs-spacing-200.
+ * @prop --bs-accordion-content-padding-bottom: Body content bottom padding. Aliased to --bs-spacing-150.
+ * @prop --bs-accordion-content-padding-right: Body content right padding. Aliased to --bs-spacing-200.
+ * @prop --bs-accordion-content-padding-left: Body content left padding, Icon=Yes (aligns under the label, past the icon box). Aliased to --bs-spacing-800.
+ * @prop --bs-accordion-content-padding-left-no-icon: Body content left padding, Icon=No. Aliased to --bs-spacing-200.
+ * @prop --bs-accordion-icon-width-medium: Leading icon box width, size="medium". Aliased to --bs-spacing-800.
+ * @prop --bs-accordion-icon-height-medium: Leading icon box height, size="medium". Not square -- 48px, no 150-scale token matches exactly so this is set directly in px, matching Figma's own spec.
+ * @prop --bs-accordion-icon-size-large: Leading icon box width/height, size="large" (square). Aliased to --bs-spacing-800.
+ * @prop --bs-accordion-font-size: Label font size. Aliased to --bs-font-size-md.
+ * @prop --bs-accordion-line-height: Label line height. Aliased to --bs-line-height-body-md.
+ * @prop --bs-accordion-font-weight: Label font weight. Aliased to --bs-font-weight-semibold.
+ * @prop --bs-accordion-text-default: Label/content color, enabled. Aliased to --bs-text-default.
+ * @prop --bs-accordion-bg-hover: Header background, hover/active/focus-visible (Figma renders hover and pressed identically). Aliased to --bs-surface-hover.
+ * @prop --bs-accordion-bg-disabled: Header/content background, disabled. Aliased to --bs-surface-action-disabled.
+ * @prop --bs-accordion-text-disabled: Label/content color, disabled. Aliased to --bs-text-on-disabled.
+ * @prop --bs-accordion-focus-ring: Focus-visible outer ring color. Aliased to --bs-border-neutral-focus.
+ */
+:host {
+  display: block;
+
+  --bs-accordion-radius: var(--bs-border-radius-100);
+  --bs-accordion-header-padding-y-medium: var(--bs-spacing-150);
+  --bs-accordion-header-padding-y-large: var(--bs-spacing-250);
+  --bs-accordion-header-padding-x: var(--bs-spacing-200);
+  --bs-accordion-content-padding-bottom: var(--bs-spacing-150);
+  --bs-accordion-content-padding-right: var(--bs-spacing-200);
+  --bs-accordion-content-padding-left: var(--bs-spacing-800);
+  --bs-accordion-content-padding-left-no-icon: var(--bs-spacing-200);
+  --bs-accordion-icon-width-medium: var(--bs-spacing-800);
+  --bs-accordion-icon-height-medium: 48px;
+  --bs-accordion-icon-size-large: var(--bs-spacing-800);
+  --bs-accordion-font-size: var(--bs-font-size-md);
+  --bs-accordion-line-height: var(--bs-line-height-body-md);
+  --bs-accordion-font-weight: var(--bs-font-weight-semibold);
+  --bs-accordion-text-default: var(--bs-text-default);
+  --bs-accordion-bg-hover: var(--bs-surface-hover);
+  --bs-accordion-bg-disabled: var(--bs-surface-action-disabled);
+  --bs-accordion-text-disabled: var(--bs-text-on-disabled);
+  --bs-accordion-focus-ring: var(--bs-border-neutral-focus);
+}
+
+.bs-accordion {
+  display: block;
+  border-radius: var(--bs-accordion-radius);
+  overflow: hidden;
+  font-family: inherit;
+}
+
+.bs-accordion__header {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  border: none;
+  background: transparent;
+  color: var(--bs-accordion-text-default);
+  padding: 0 var(--bs-accordion-header-padding-x);
+  cursor: pointer;
+  font-family: inherit;
+  text-align: left;
+  border-radius: var(--bs-accordion-radius);
+}
+
+.bs-accordion__header--medium {
+  padding-top: var(--bs-accordion-header-padding-y-medium);
+  padding-bottom: var(--bs-accordion-header-padding-y-medium);
+}
+
+.bs-accordion__header--large {
+  padding-top: var(--bs-accordion-header-padding-y-large);
+  padding-bottom: var(--bs-accordion-header-padding-y-large);
+}
+
+/* Icon=No: no icon box reserving space on the left -- the label gets the symmetric padding
+   directly, confirmed against Figma's Icon=No variant. */
+.bs-accordion__header--no-icon {
+  padding-left: var(--bs-accordion-header-padding-x);
+}
+
+.bs-accordion__header:hover,
+.bs-accordion__header:active {
+  background: var(--bs-accordion-bg-hover);
+}
+
+.bs-accordion__header:focus-visible {
+  background: var(--bs-accordion-bg-hover);
+  outline: 2px solid var(--bs-accordion-focus-ring);
+  outline-offset: -2px;
+  /* Ring radius = component radius + 2px, so the ring visually hugs the component's own rounded
+     corners instead of looking squared-off relative to them. */
+  border-radius: calc(var(--bs-accordion-radius) + 2px);
+}
+
+.bs-accordion__header:disabled {
+  background: var(--bs-accordion-bg-disabled);
+  color: var(--bs-accordion-text-disabled);
+  cursor: default;
+}
+
+.bs-accordion__icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  color: inherit;
+}
+
+.bs-accordion__icon svg {
+  width: 24px;
+  height: 24px;
+}
+
+.bs-accordion__icon--medium {
+  width: var(--bs-accordion-icon-width-medium);
+  height: var(--bs-accordion-icon-height-medium);
+}
+
+.bs-accordion__icon--large {
+  width: var(--bs-accordion-icon-size-large);
+  height: var(--bs-accordion-icon-size-large);
+}
+
+.bs-accordion__label {
+  flex: 1 1 auto;
+  min-width: 0;
+  font-size: var(--bs-accordion-font-size);
+  line-height: calc(var(--bs-accordion-line-height) * 1px);
+  font-weight: var(--bs-accordion-font-weight);
+}
+
+.bs-accordion__caret {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  flex-shrink: 0;
+  color: inherit;
+}
+
+.bs-accordion__caret svg {
+  width: 24px;
+  height: 24px;
+}
+
+.bs-accordion__content {
+  padding-top: 0;
+  padding-bottom: var(--bs-accordion-content-padding-bottom);
+  padding-right: var(--bs-accordion-content-padding-right);
+  padding-left: var(--bs-accordion-content-padding-left);
+  color: var(--bs-accordion-text-default);
+  font-size: var(--bs-accordion-font-size);
+  line-height: calc(var(--bs-accordion-line-height) * 1px);
+}
+
+.bs-accordion__content--no-icon {
+  padding-left: var(--bs-accordion-content-padding-left-no-icon);
+}
+
+/* Collapsed + showPreview: pure CSS truncation of the SAME slotted content to a single line --
+   not different content. */
+.bs-accordion__content--collapsed {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.bs-accordion--disabled .bs-accordion__content {
+  background: var(--bs-accordion-bg-disabled);
+  color: var(--bs-accordion-text-disabled);
+}
