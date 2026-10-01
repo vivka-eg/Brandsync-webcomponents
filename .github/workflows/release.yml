@@ -62,18 +62,33 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
-      # Tells Brandsync-react's own workflow a new @brandsync/react version just published, so it
-      # can scaffold a Storybook stub for any newly-added component -- NOT full story authoring
-      # (that still needs a human/follow-up session), just the mechanical "does a stub exist yet"
-      # part. Only fires on an actual publish, not on the "opened a Version Packages PR" branch of
-      # the changesets/action step above. Needs CROSS_REPO_PAT: the default GITHUB_TOKEN is scoped
-      # to this repo only, so reaching another repo's API needs an explicit PAT with `repo` scope
-      # for Brandsync-react specifically.
-      - name: Notify Brandsync-react of new release
+      # Tells Brandsync-react-storybook's and Brandsync-angular-storybook's own workflows that a
+      # new @brandsync/react / @brandsync/angular version just published, so each can scaffold a
+      # Storybook stub for any newly-added component -- NOT full story authoring (that still needs
+      # a human/follow-up pass), just the mechanical "does a stub exist yet" part. Only fires on an
+      # actual publish, not on the "opened a Version Packages PR" branch of the changesets/action
+      # step above. Needs CROSS_REPO_PAT: the default GITHUB_TOKEN is scoped to this repo only, so
+      # reaching another repo's API needs an explicit PAT with `repo` scope for both target repos.
+      #
+      # The repo name here was previously "Brandsync-react" (pre-rename) -- GitHub's repo-rename
+      # redirect silently kept that working, which is why Brandsync-react-storybook kept receiving
+      # this dispatch while Brandsync-angular-storybook, which never had an equivalent step at all,
+      # fell behind (missing bs-toast/bs-progress/bs-progress-linear stories). Fixed both: updated
+      # to the current repo name, and added the missing Angular step.
+      - name: Notify Brandsync-react-storybook of new release
         if: steps.changesets.outputs.published == 'true'
         run: |
           curl -f -X POST \
             -H "Authorization: token ${{ secrets.CROSS_REPO_PAT }}" \
             -H "Accept: application/vnd.github+json" \
-            https://api.github.com/repos/vivka-eg/Brandsync-react/dispatches \
+            https://api.github.com/repos/vivka-eg/Brandsync-react-storybook/dispatches \
+            -d '{"event_type":"wc-published","client_payload":{"published_packages":${{ steps.changesets.outputs.publishedPackages }}}}'
+
+      - name: Notify Brandsync-angular-storybook of new release
+        if: steps.changesets.outputs.published == 'true'
+        run: |
+          curl -f -X POST \
+            -H "Authorization: token ${{ secrets.CROSS_REPO_PAT }}" \
+            -H "Accept: application/vnd.github+json" \
+            https://api.github.com/repos/vivka-eg/Brandsync-angular-storybook/dispatches \
             -d '{"event_type":"wc-published","client_payload":{"published_packages":${{ steps.changesets.outputs.publishedPackages }}}}'
