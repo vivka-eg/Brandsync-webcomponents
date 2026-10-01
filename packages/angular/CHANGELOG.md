@@ -1,5 +1,16 @@
 # @brandsync/angular
 
+## 1.5.0
+
+### Minor Changes
+
+- 7c6b1cf: Add `bs-accordion` component: a collapsible section with an optional leading icon, label, and trailing caret, a controlled `expanded` prop (`bsToggle` event, consumer echoes the change back), `medium`/`large` sizes, and a single-line CSS preview of the body content while collapsed.
+
+### Patch Changes
+
+- Updated dependencies [7c6b1cf]
+  - @brandsync/wc@1.5.0
+
 ## 1.4.0
 
 ### Minor Changes
