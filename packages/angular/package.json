@@ -1,6 +1,6 @@
 {
   "name": "@brandsync/angular",
-  "version": "1.5.1",
+  "version": "1.5.2",
   "description": "Brandsync design system components as Angular standalone components",
   "publishConfig": {
     "access": "public"
@@ -12,7 +12,7 @@
     "@angular/core": "^19.0.0"
   },
   "dependencies": {
-    "@brandsync/wc": "^1.5.1"
+    "@brandsync/wc": "^1.5.2"
   },
   "devDependencies": {
     "@angular/common": "^19.0.0",
