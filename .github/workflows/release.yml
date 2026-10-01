@@ -69,15 +69,68 @@ jobs:
       # equivalent step at all and silently fell behind). Now that everything lives in one repo,
       # this runs the same scaffold scripts locally, directly against the packages just built by
       # `npm run build:all` above -- no registry install, no cross-repo auth, no PAT needed.
+      # Deterministic, cheap, and reliable: computes exactly which component names are missing a
+      # story in each package and writes a minimal boilerplate stub for each (props table via
+      # `autodocs`, no realistic content) -- a safety-net fallback that always leaves SOMETHING
+      # in place even if the AI-authoring step below fails/times out/hits a rate limit. Captures
+      # each script's own "Scaffolding stories for N new component(s): X, Y, Z" stdout line so the
+      # next step knows exactly which names to write real content for, without re-deriving the
+      # diff itself (keeps that step narrowly scoped and cheap, rather than having an LLM redo
+      # bookkeeping a 20-line script already does for free).
       - name: Scaffold story stubs for newly-released components
+        id: scaffold
         if: steps.changesets.outputs.published == 'true'
         run: |
-          node packages/react-storybook/scripts/scaffold-new-stories.js
-          node packages/angular-storybook/scripts/scaffold-new-stories.js
+          react_log="$(node packages/react-storybook/scripts/scaffold-new-stories.js)"
+          echo "$react_log"
+          angular_log="$(node packages/angular-storybook/scripts/scaffold-new-stories.js)"
+          echo "$angular_log"
+          react_new="$(echo "$react_log" | grep -oP '(?<=new component\(s\): ).*' || true)"
+          angular_new="$(echo "$angular_log" | grep -oP '(?<=new component\(s\): ).*' || true)"
+          echo "react_new=$react_new" >> "$GITHUB_OUTPUT"
+          echo "angular_new=$angular_new" >> "$GITHUB_OUTPUT"
 
-      # If neither script above found anything new, `git status` is clean here and there's nothing
+      # Overwrites the just-written stubs (and ONLY those -- the prompt is handed the exact list
+      # computed above, not asked to re-discover what's missing) with real story content: reads
+      # the component's own wc source (story/mdx/JSDoc -- already committed on main by whoever
+      # built the component, well before this release cycle), the target package's generated prop
+      # types, and one existing real story in the same package as the format reference. Still
+      # lands on the same review-gated PR as the stub fallback -- never auto-merged.
+      - name: Write real story content for new components
+        if: steps.changesets.outputs.published == 'true' && (steps.scaffold.outputs.react_new != '' || steps.scaffold.outputs.angular_new != '')
+        uses: anthropics/claude-code-action@main
+        with:
+          prompt: |
+            New components were just published and given minimal boilerplate story stubs that need
+            real content:
+            - React (packages/react-storybook/src/stories/*.stories.tsx): ${{ steps.scaffold.outputs.react_new }}
+            - Angular (packages/angular-storybook/src/stories/*.stories.ts): ${{ steps.scaffold.outputs.angular_new }}
+            (either list may be empty -- only touch files for the package(s) with names listed.)
+
+            For each name listed, in each package it's listed for:
+            1. Read its real source-of-truth content under packages/wc/src/components/ -- its
+               .stories.ts (args/variants), .mdx (usage/when-to-use), and .tsx (prop/slot/part
+               JSDoc). The directory may be nested one level deeper under a shared family folder
+               (e.g. bs-button/bs-icon-button/) -- search if the direct kebab-case path doesn't
+               exist.
+            2. Read the target package's own generated type definitions for that component's
+               props/events (already built locally: packages/react/dist/index.d.ts, or
+               packages/angular/dist/lib/components.d.ts).
+            3. Read ONE existing, fully-authored story already in that SAME target package (e.g.
+               BsButton.stories.tsx / BsButton.stories.ts) as the format/convention reference.
+            4. Overwrite the existing stub file for this component with a real story: realistic
+               args/variants translated from the wc story, a parameters.docs.description.component
+               block condensed from the wc component's class-level JSDoc, and per-prop argTypes
+               descriptions sourced from that prop's own JSDoc. Do not invent content that has no
+               source -- leave a prop undescribed rather than guessing.
+            5. Do not touch any file other than the stub(s) named above.
+          claude_args: '--allowedTools "Read,Write,Edit,Glob,Grep"'
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+
+      # If none of the above found/wrote anything, `git status` is clean here and there's nothing
       # to open a PR for.
-      - name: Check for new story stubs
+      - name: Check for new story changes
         id: check
         if: steps.changesets.outputs.published == 'true'
         run: |
@@ -87,17 +140,18 @@ jobs:
             echo "has_changes=false" >> "$GITHUB_OUTPUT"
           fi
 
-      - name: Open PR with new story stubs
+      - name: Open PR with new/updated stories
         if: steps.check.outputs.has_changes == 'true'
         uses: peter-evans/create-pull-request@v6
         with:
-          commit-message: 'Scaffold story stubs for newly-released components'
-          title: 'New component story stubs (needs a human pass)'
+          commit-message: 'Add stories for newly-released components'
+          title: 'New component stories (verify before merging)'
           body: |
             A new release added one or more components that didn't have a React and/or Angular
-            story yet. This PR adds a minimal boilerplate stub for each (working props table +
-            default render via Storybook's `autodocs` tag) -- **it does not add realistic
-            args/variants**. See an existing story in the same package for the pattern the real
-            stories follow, and flesh these out the same way before merging.
+            story yet. Claude Code drafted real story content for each from the component's own
+            `wc` source (story/mdx/JSDoc) -- **verify it against the live component before
+            merging**, same review bar as any other AI-authored change. If the AI step didn't run
+            or failed, this may instead just be the minimal boilerplate-stub fallback (props table
+            via `autodocs`, no realistic args) -- check the diff to see which you got.
           branch: scaffold-new-stories
           delete-branch: true
