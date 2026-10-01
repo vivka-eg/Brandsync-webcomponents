@@ -24,16 +24,35 @@ publish_if_new() {
 
   if npm view "$name@$version" version >/dev/null 2>&1; then
     echo "Skipping $name@$version -- already on the registry."
-  else
-    echo "Publishing $name@$version from $dir..."
-    npm publish "./$dir"
-    # changesets/action detects what got published by scanning this script's stdout for
-    # "New tag: <pkg>@<version>" -- that's the exact line @changesets/cli's own `publish`
-    # command prints, NOT npm publish's own "+ pkg@version" line above. Without this,
-    # outputs.published/publishedPackages stay false/empty even on a real successful
-    # publish, silently skipping the downstream Brandsync-react notify step.
-    echo "New tag: $name@$version"
+    return
   fi
+
+  echo "Publishing $name@$version from $dir..."
+  # `npm view` above is a read against the registry, which can lag a few seconds behind a publish
+  # that's still propagating -- so two release.yml runs close together (e.g. the PR#4 merge commit
+  # publishing successfully, then an unrelated follow-up push re-running this same script against
+  # an unchanged version) can both see "not yet visible" and both attempt `npm publish`. The
+  # second one gets a real 409 from npm ("Cannot publish over previously staged version") -- which
+  # actually CONFIRMS the version is live, it just didn't do the uploading. Treat that one specific
+  # case as success (not a failure to propagate upward and abort the whole script), everything
+  # else still fails loudly.
+  local publish_output
+  if publish_output=$(npm publish "./$dir" 2>&1); then
+    echo "$publish_output"
+  elif echo "$publish_output" | grep -q "previously staged version"; then
+    echo "$publish_output"
+    echo "$name@$version was already published by a concurrent/earlier run -- treating as success."
+  else
+    echo "$publish_output" >&2
+    return 1
+  fi
+
+  # changesets/action detects what got published by scanning this script's stdout for
+  # "New tag: <pkg>@<version>" -- that's the exact line @changesets/cli's own `publish`
+  # command prints, NOT npm publish's own "+ pkg@version" line above. Without this,
+  # outputs.published/publishedPackages stay false/empty even on a real successful
+  # publish, silently skipping the downstream story-scaffolding/notify steps.
+  echo "New tag: $name@$version"
 }
 
 publish_if_new "packages/wc"
