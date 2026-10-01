@@ -16,7 +16,7 @@
     "@angular/platform-browser": "^19.0.0",
     "@angular/platform-browser-dynamic": "^19.0.0",
     "@brandsync/angular": "file:../angular/dist",
-    "@brandsync/wc": "^1.5.3",
+    "@brandsync/wc": "^1.5.4",
     "rxjs": "^7.8.1",
     "zone.js": "^0.15.0"
   },
