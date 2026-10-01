@@ -1,5 +1,11 @@
 # @brandsync/wc
 
+## 1.5.4
+
+### Patch Changes
+
+- c842222: No user-facing change -- re-triggering a clean release cycle to verify the direct `claude` CLI invocation (replacing `claude-code-action`, which doesn't support push-triggered events).
+
 ## 1.5.3
 
 ### Patch Changes
