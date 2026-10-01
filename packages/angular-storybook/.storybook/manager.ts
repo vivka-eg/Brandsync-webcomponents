@@ -1,0 +1,23 @@
+import { addons } from 'storybook/manager-api';
+import { create } from 'storybook/theming';
+
+// The manager UI (sidebar/toolbar) is a separate bundle from the preview iframe our stories
+// render in, so it can't render a live <bs-logo>/Angular component here -- brandImage needs a
+// plain static image. brand-logo.svg (served via main.ts's staticDirs) pairs the real BrandSync
+// mark (extracted from @brandsync/wc's own bs-logo source) with Angular's own shield logo, to make
+// it obvious at a glance that this is the @brandsync/angular library, not the web-components one.
+//
+// Deliberately a relative path, not '/brand-logo.svg' -- if this site is ever deployed to GitHub
+// Pages as a *project* page (github.com/<org>/Brandsync-angular -> <org>.github.io/Brandsync-angular/,
+// not the domain root), an absolute root path 404s there even though it resolves fine on
+// localhost. A relative path resolves against the manager's own document location instead, which
+// is correct in both places (and any other subpath this ever gets served from).
+addons.setConfig({
+  theme: create({
+    base: 'light',
+    brandTitle: 'Brandsync Angular',
+    brandUrl: 'https://github.com/vivka-eg/Brandsync-angular-storybook',
+    brandImage: './brand-logo.svg',
+    brandTarget: '_self',
+  }),
+});

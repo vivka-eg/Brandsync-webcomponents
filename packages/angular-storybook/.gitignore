@@ -1,0 +1,6 @@
+node_modules/
+storybook-static/
+.angular/
+documentation.json
+*.log
+.DS_Store

@@ -62,33 +62,42 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
-      # Tells Brandsync-react-storybook's and Brandsync-angular-storybook's own workflows that a
-      # new @brandsync/react / @brandsync/angular version just published, so each can scaffold a
-      # Storybook stub for any newly-added component -- NOT full story authoring (that still needs
-      # a human/follow-up pass), just the mechanical "does a stub exist yet" part. Only fires on an
-      # actual publish, not on the "opened a Version Packages PR" branch of the changesets/action
-      # step above. Needs CROSS_REPO_PAT: the default GITHUB_TOKEN is scoped to this repo only, so
-      # reaching another repo's API needs an explicit PAT with `repo` scope for both target repos.
-      #
-      # The repo name here was previously "Brandsync-react" (pre-rename) -- GitHub's repo-rename
-      # redirect silently kept that working, which is why Brandsync-react-storybook kept receiving
-      # this dispatch while Brandsync-angular-storybook, which never had an equivalent step at all,
-      # fell behind (missing bs-toast/bs-progress/bs-progress-linear stories). Fixed both: updated
-      # to the current repo name, and added the missing Angular step.
-      - name: Notify Brandsync-react-storybook of new release
+      # react-storybook/angular-storybook are now sibling workspace packages in this SAME repo
+      # (previously two separate repos, kept in sync via a cross-repo repository_dispatch + a
+      # CROSS_REPO_PAT secret -- that's exactly the class of bug just fixed here: one repo got
+      # renamed and only kept working by luck via GitHub's redirect, the other never had an
+      # equivalent step at all and silently fell behind). Now that everything lives in one repo,
+      # this runs the same scaffold scripts locally, directly against the packages just built by
+      # `npm run build:all` above -- no registry install, no cross-repo auth, no PAT needed.
+      - name: Scaffold story stubs for newly-released components
         if: steps.changesets.outputs.published == 'true'
         run: |
-          curl -f -X POST \
-            -H "Authorization: token ${{ secrets.CROSS_REPO_PAT }}" \
-            -H "Accept: application/vnd.github+json" \
-            https://api.github.com/repos/vivka-eg/Brandsync-react-storybook/dispatches \
-            -d '{"event_type":"wc-published","client_payload":{"published_packages":${{ steps.changesets.outputs.publishedPackages }}}}'
+          node packages/react-storybook/scripts/scaffold-new-stories.js
+          node packages/angular-storybook/scripts/scaffold-new-stories.js
 
-      - name: Notify Brandsync-angular-storybook of new release
+      # If neither script above found anything new, `git status` is clean here and there's nothing
+      # to open a PR for.
+      - name: Check for new story stubs
+        id: check
         if: steps.changesets.outputs.published == 'true'
         run: |
-          curl -f -X POST \
-            -H "Authorization: token ${{ secrets.CROSS_REPO_PAT }}" \
-            -H "Accept: application/vnd.github+json" \
-            https://api.github.com/repos/vivka-eg/Brandsync-angular-storybook/dispatches \
-            -d '{"event_type":"wc-published","client_payload":{"published_packages":${{ steps.changesets.outputs.publishedPackages }}}}'
+          if [ -n "$(git status --porcelain packages/react-storybook/src/stories/ packages/angular-storybook/src/stories/)" ]; then
+            echo "has_changes=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "has_changes=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Open PR with new story stubs
+        if: steps.check.outputs.has_changes == 'true'
+        uses: peter-evans/create-pull-request@v6
+        with:
+          commit-message: 'Scaffold story stubs for newly-released components'
+          title: 'New component story stubs (needs a human pass)'
+          body: |
+            A new release added one or more components that didn't have a React and/or Angular
+            story yet. This PR adds a minimal boilerplate stub for each (working props table +
+            default render via Storybook's `autodocs` tag) -- **it does not add realistic
+            args/variants**. See an existing story in the same package for the pattern the real
+            stories follow, and flesh these out the same way before merging.
+          branch: scaffold-new-stories
+          delete-branch: true

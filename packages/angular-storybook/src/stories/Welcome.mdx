@@ -1,0 +1,114 @@
+import { Meta, Story } from '@storybook/addon-docs/blocks';
+import * as ButtonStories from './BsButton.stories';
+import * as BadgeStories from './BsBadge.stories';
+import * as AvatarStories from './BsAvatar.stories';
+import * as LogoStories from './BsLogo.stories';
+
+<Meta title="Welcome" />
+
+export const AngularLogo = () => (
+  <svg width="40" height="40" viewBox="0 0 250 250" xmlns="http://www.w3.org/2000/svg" aria-label="Angular">
+    <path fill="#DD0031" d="M125 30L125 30 31.9 63.2 46.1 186.3 125 230 125 230 203.9 186.3 218.1 63.2z"/>
+    <path fill="#C3002F" d="M125 30L125 52.2 125 52.1 125 153.4 125 153.4 125 230 125 230 203.9 186.3 218.1 63.2 125 30z"/>
+    <path fill="#FFFFFF" d="M125 52.1L66.8 182.6 88.5 182.6 100.4 154.1 149.6 154.1 161.5 182.6 183.2 182.6 125 52.1zM142.1 135.4L107.9 135.4 125 94.1 142.1 135.4z"/>
+  </svg>
+);
+
+export const cardStyle = {
+  display: 'block',
+  padding: 'var(--bs-spacing-300, 20px)',
+  borderRadius: 'var(--bs-border-radius-200, 12px)',
+  border: '1px solid var(--bs-border-neutral-container, #E8EAEE)',
+  background: 'var(--bs-surface-raised, #FFFFFF)',
+  textDecoration: 'none',
+  color: 'inherit',
+};
+
+<div
+  style={{
+    display: 'flex',
+    alignItems: 'center',
+    gap: 'var(--bs-spacing-400, 24px)',
+    padding: 'var(--bs-spacing-500, 32px)',
+    borderRadius: 'var(--bs-border-radius-300, 16px)',
+    background: 'var(--bs-surface-container, #F4F5FA)',
+    border: '1px solid var(--bs-border-neutral-container, #E8EAEE)',
+    marginBottom: 'var(--bs-spacing-500, 32px)',
+  }}
+>
+  <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexShrink: 0 }}>
+    <Story of={LogoStories.Mark} />
+    <span style={{ fontSize: 20, color: 'var(--bs-text-muted, #5B6170)' }}>+</span>
+    <AngularLogo />
+  </div>
+  <div>
+    <h1 style={{ margin: 0, fontSize: 32, fontWeight: 700, color: 'var(--bs-text-default, #1A1D29)' }}>
+      Welcome to BrandSync Angular
+    </h1>
+    <p style={{ margin: '8px 0 0', fontSize: 16, lineHeight: 1.5, color: 'var(--bs-text-muted, #5B6170)', maxWidth: 620 }}>
+      Angular components for the BrandSync design system. Every story in this Storybook renders <code>@brandsync/angular</code> installed straight from the public npm registry — never local source — so what you see here is exactly what you'd get in a real consuming app.
+    </p>
+  </div>
+</div>
+
+<div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginBottom: 'var(--bs-spacing-500, 32px)' }}>
+  <span style={{ ...cardStyle, padding: '4px 12px', display: 'inline-block', fontSize: 13, fontWeight: 600 }}>45 components</span>
+  <span style={{ ...cardStyle, padding: '4px 12px', display: 'inline-block', fontSize: 13, fontWeight: 600 }}>Angular 19</span>
+  <span style={{ ...cardStyle, padding: '4px 12px', display: 'inline-block', fontSize: 13, fontWeight: 600 }}>Installed from npm</span>
+  <span style={{ ...cardStyle, padding: '4px 12px', display: 'inline-block', fontSize: 13, fontWeight: 600 }}>Storybook 10</span>
+</div>
+
+## Getting started
+
+```bash
+npm install @brandsync/angular @brandsync/wc
+```
+
+```ts
+import { BsButton } from '@brandsync/angular';
+// Every bs-* component's styling is written entirely against --bs-* design tokens, and this
+// package doesn't inject them itself -- this import is what actually makes them visible.
+import '@brandsync/wc/dist/brandsync-wc/brandsync-wc.css';
+
+@Component({
+  standalone: true,
+  imports: [BsButton],
+  template: `<bs-button variant="primary">Book room</bs-button>`,
+})
+export class ExampleComponent {}
+```
+
+> **Don't skip the CSS import.** Skipping it is the #1 cause of a `bs-*` component rendering with
+> no visible border/background and near-zero size — with no console error to point you at why.
+> The tokens also define `Roboto` as the typeface by name, but don't load the font file itself —
+> that's the consuming app's job too (a `<link>` to Google Fonts, `next/font/google`, etc.).
+
+## Explore the library
+
+<a href="?path=/docs/components-bsbutton--docs" style={{ ...cardStyle, display: 'block', maxWidth: 320, marginBottom: 'var(--bs-spacing-500, 32px)' }}>
+  <h3 style={{ margin: '0 0 8px', fontSize: 18 }}>Components</h3>
+  <p style={{ margin: 0, fontSize: 14, color: 'var(--bs-text-muted, #5B6170)' }}>45 components — buttons, inputs, cards, tables, navigation, chatbot building blocks and more, each with full prop docs.</p>
+</a>
+
+## A quick preview
+
+<div
+  style={{
+    display: 'flex',
+    gap: 16,
+    alignItems: 'center',
+    flexWrap: 'wrap',
+    padding: 'var(--bs-spacing-400, 24px)',
+    borderRadius: 'var(--bs-border-radius-200, 12px)',
+    background: 'var(--bs-surface-container, #F4F5FA)',
+  }}
+>
+  <Story of={AvatarStories.Initials} />
+  <Story of={ButtonStories.Primary} />
+  <Story of={ButtonStories.Outlined} />
+  <Story of={BadgeStories.Primary} />
+</div>
+
+---
+
+<p style={{ fontSize: 13, color: 'var(--bs-text-muted, #5B6170)' }}>This site exists to prove <code>@brandsync/angular</code> works as a real npm dependency, document the integration gotchas above, and give every exported component a working example and full prop docs.</p>

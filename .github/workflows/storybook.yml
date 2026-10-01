@@ -1,9 +1,11 @@
 name: Deploy Storybook to GitHub Pages
 
-# This Storybook also acts as the Storybook Composition hub for the sibling React/Angular
-# wrapper Storybooks (see packages/wc/.storybook/main.ts's `refs` config) -- those two deploy
-# themselves independently from their own repos (Brandsync-react-storybook,
-# Brandsync-angular-storybook); this workflow only builds/deploys this repo's own Storybook.
+# Builds all three Storybooks (wc, react-storybook, angular-storybook -- sibling workspace
+# packages in this monorepo) and combines them into one deployment: wc's Storybook at the site
+# root, react-storybook at /react/, angular-storybook at /angular/. wc's own Storybook Composition
+# config (packages/wc/.storybook/main.ts's `refs`) links to the other two via those same relative
+# paths, so the sidebar dropdown can switch between all three without any cross-origin requests --
+# all three are part of this one repo/deployment, no dependency on any other repo staying up.
 
 on:
   push:
@@ -29,11 +31,25 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci
-      - run: npm run build-storybook
+      # @brandsync/wc/react/angular must all be built first -- react-storybook/angular-storybook
+      # depend on the npm-published packages via local workspace symlinks (see those packages'
+      # own package.json descriptions), which only resolve to real content once built.
+      - run: npm run build:all
+      - run: npm run build-storybook -w packages/wc
+      - run: npm run build-storybook -w packages/react-storybook
+      - run: npm run build-storybook -w packages/angular-storybook
+
+      - name: Combine all three builds into one site
+        run: |
+          mkdir -p _site/react _site/angular
+          cp -r packages/wc/storybook-static/. _site/
+          cp -r packages/react-storybook/storybook-static/. _site/react/
+          cp -r packages/angular-storybook/storybook-static/. _site/angular/
+
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
         with:
-          path: packages/wc/storybook-static
+          path: _site
 
   deploy:
     needs: build

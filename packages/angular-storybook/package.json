@@ -1,0 +1,35 @@
+{
+  "name": "brandsync-angular-storybook",
+  "private": true,
+  "version": "0.0.0",
+  "description": "Storybook showcase for @brandsync/angular. A workspace member of this monorepo. @brandsync/angular below is a `file:` dependency pointing at packages/angular/dist specifically (NOT the ambient npm-workspaces auto-link, which would resolve to packages/angular's own SOURCE package.json -- ng-packagr builds Angular's publishable artifact, with its own separate generated package.json/main/module fields, one level deeper into dist/, same nuance documented in packages/wc's scripts/publish.sh). Still goes through the real built output, same as an npm-registry install would.",
+  "scripts": {
+    "storybook": "ng run brandsync-angular-storybook:storybook",
+    "build-storybook": "ng run brandsync-angular-storybook:build-storybook"
+  },
+  "dependencies": {
+    "@angular/animations": "^19.0.0",
+    "@angular/common": "^19.0.0",
+    "@angular/compiler": "^19.0.0",
+    "@angular/core": "^19.0.0",
+    "@angular/forms": "^19.0.0",
+    "@angular/platform-browser": "^19.0.0",
+    "@angular/platform-browser-dynamic": "^19.0.0",
+    "@brandsync/angular": "file:../angular/dist",
+    "@brandsync/wc": "^1.1.0",
+    "rxjs": "^7.8.1",
+    "zone.js": "^0.15.0"
+  },
+  "devDependencies": {
+    "@angular-devkit/architect": "^0.1900.0",
+    "@angular-devkit/build-angular": "^19.0.0",
+    "@angular-devkit/core": "^19.0.0",
+    "@angular/cli": "^19.0.0",
+    "@angular/compiler-cli": "^19.0.0",
+    "@compodoc/compodoc": "^2.0.0",
+    "@storybook/addon-docs": "^10.5.10",
+    "@storybook/angular": "^10.5.10",
+    "storybook": "^10.5.10",
+    "typescript": "~5.6.3"
+  }
+}

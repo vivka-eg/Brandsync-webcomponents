@@ -10,7 +10,8 @@
     "build:all": "npm run build -w packages/wc && npm run build -w packages/react -w packages/angular",
     "test": "npm run test -w packages/wc",
     "storybook": "npm run storybook -w packages/wc",
-    "build-storybook": "npm run build-storybook -w packages/wc"
+    "build-storybook": "npm run build-storybook -w packages/wc",
+    "build-storybook:all": "npm run build:all && npm run build-storybook -w packages/wc && npm run build-storybook -w packages/react-storybook && npm run build-storybook -w packages/angular-storybook"
   },
   "devDependencies": {
     "@changesets/cli": "^3.0.3"
