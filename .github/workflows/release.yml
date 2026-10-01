@@ -96,42 +96,34 @@ jobs:
       # built the component, well before this release cycle), the target package's generated prop
       # types, and one existing real story in the same package as the format reference. Still
       # lands on the same review-gated PR as the stub fallback -- never auto-merged.
+      # anthropics/claude-code-action is built around PR/issue-comment events (@claude mentions)
+      # -- confirmed via a real CI run, it fails outright with "Unsupported event type: push"
+      # before even reading a prompt, and its own accepted-inputs list (surfaced in that run's own
+      # warning output) has no escape-hatch input for this at all, e.g. no `mode` field despite
+      # that being a documented-sounding option elsewhere. Calling the `claude` CLI directly
+      # instead sidesteps the whole GitHub-event-type concept -- it's just a program taking a
+      # prompt, with no awareness of what triggered the workflow.
       - name: Write real story content for new components
         if: steps.changesets.outputs.published == 'true' && (steps.scaffold.outputs.react_new != '' || steps.scaffold.outputs.angular_new != '')
-        uses: anthropics/claude-code-action@v1
-        with:
-          # Default mode detection expects a PR/issue-comment event (@claude mentions) -- without
-          # this, a plain `push`-triggered workflow fails outright with "Unsupported event type:
-          # push" before even reading the prompt below. `automation` is the headless mode for
-          # running on arbitrary trigger events like this one.
-          mode: automation
-          prompt: |
-            New components were just published and given minimal boilerplate story stubs that need
-            real content:
-            - React (packages/react-storybook/src/stories/*.stories.tsx): ${{ steps.scaffold.outputs.react_new }}
-            - Angular (packages/angular-storybook/src/stories/*.stories.ts): ${{ steps.scaffold.outputs.angular_new }}
-            (either list may be empty -- only touch files for the package(s) with names listed.)
-
-            For each name listed, in each package it's listed for:
-            1. Read its real source-of-truth content under packages/wc/src/components/ -- its
-               .stories.ts (args/variants), .mdx (usage/when-to-use), and .tsx (prop/slot/part
-               JSDoc). The directory may be nested one level deeper under a shared family folder
-               (e.g. bs-button/bs-icon-button/) -- search if the direct kebab-case path doesn't
-               exist.
-            2. Read the target package's own generated type definitions for that component's
-               props/events (already built locally: packages/react/dist/index.d.ts, or
-               packages/angular/dist/lib/components.d.ts).
-            3. Read ONE existing, fully-authored story already in that SAME target package (e.g.
-               BsButton.stories.tsx / BsButton.stories.ts) as the format/convention reference.
-            4. Overwrite the existing stub file for this component with a real story: realistic
-               args/variants translated from the wc story, a parameters.docs.description.component
-               block condensed from the wc component's class-level JSDoc, and per-prop argTypes
-               descriptions sourced from that prop's own JSDoc. Do not invent content that has no
-               source -- leave a prop undescribed rather than guessing.
-            5. Do not touch any file other than the stub(s) named above.
-          claude_args: '--allowedTools "Read,Write,Edit,Glob,Grep"'
         env:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          REACT_NEW: ${{ steps.scaffold.outputs.react_new }}
+          ANGULAR_NEW: ${{ steps.scaffold.outputs.angular_new }}
+        run: |
+          npm install -g @anthropic-ai/claude-code
+          claude -p "New components were just published and given minimal boilerplate story stubs that need real content:
+          - React (packages/react-storybook/src/stories/*.stories.tsx): $REACT_NEW
+          - Angular (packages/angular-storybook/src/stories/*.stories.ts): $ANGULAR_NEW
+          (either list may be empty -- only touch files for the package(s) with names listed.)
+
+          For each name listed, in each package it's listed for:
+          1. Read its real source-of-truth content under packages/wc/src/components/ -- its .stories.ts (args/variants), .mdx (usage/when-to-use), and .tsx (prop/slot/part JSDoc). The directory may be nested one level deeper under a shared family folder (e.g. bs-button/bs-icon-button/) -- search if the direct kebab-case path doesn't exist.
+          2. Read the target package's own generated type definitions for that component's props/events (already built locally: packages/react/dist/index.d.ts, or packages/angular/dist/lib/components.d.ts).
+          3. Read ONE existing, fully-authored story already in that SAME target package (e.g. BsButton.stories.tsx / BsButton.stories.ts) as the format/convention reference.
+          4. Overwrite the existing stub file for this component with a real story: realistic args/variants translated from the wc story, a parameters.docs.description.component block condensed from the wc component's class-level JSDoc, and per-prop argTypes descriptions sourced from that prop's own JSDoc. Do not invent content that has no source -- leave a prop undescribed rather than guessing.
+          5. Do not touch any file other than the stub(s) named above." \
+          --allowedTools "Read,Write,Edit,Glob,Grep" \
+          --dangerously-skip-permissions
 
       # If none of the above found/wrote anything, `git status` is clean here and there's nothing
       # to open a PR for.
