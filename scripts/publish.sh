@@ -53,6 +53,19 @@ publish_if_new() {
   # outputs.published/publishedPackages stay false/empty even on a real successful
   # publish, silently skipping the downstream story-scaffolding/notify steps.
   echo "New tag: $name@$version"
+
+  # changesets/action's own internal step (after this script returns) tries to `git push` a tag
+  # named exactly "$name@$version" for everything it parsed from the "New tag:" lines above --
+  # but @changesets/cli's DEFAULT `changeset publish` command is what normally creates that local
+  # tag via `git tag` as part of its own process. Since we bypass that default command entirely
+  # (this custom script exists because of @brandsync/angular's nested dist/ publish path), nothing
+  # ever actually ran `git tag` locally, so that push failed outright ("src refspec ... does not
+  # match any") -- confirmed via a real CI run where npm publish fully succeeded but the job still
+  # reported failure because of this, which in turn meant changesets/action never got to set its
+  # own `published` output, silently skipping the downstream story-scaffolding steps every time.
+  # Creating the tag ourselves here closes that gap. `-f` makes this idempotent against a retry
+  # of the same version.
+  git tag -f "$name@$version"
 }
 
 publish_if_new "packages/wc"
