@@ -53,6 +53,19 @@ A clickable action element for the single most important action in a given conte
 | `"label"`    | The text label element.            |
 
 
+## Dependencies
+
+### Used by
+
+ - [bs-snackbar](../../bs-snackbar)
+
+### Graph
+```mermaid
+graph TD;
+  bs-snackbar --> bs-button
+  style bs-button fill:#f9f,stroke:#333,stroke-width:4px
+```
+
 ----------------------------------------------
 
 *Built with [StencilJS](https://stenciljs.com/)*

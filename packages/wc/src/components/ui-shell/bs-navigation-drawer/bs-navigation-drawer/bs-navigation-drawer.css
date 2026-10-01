@@ -12,7 +12,10 @@
  *   rhythm) -- bumped up from the originally Figma-measured --bs-spacing-150 (12px) at the user's
  *   request after seeing it rendered (felt cramped in practice), not a Figma re-measurement.
  * @prop --bs-navigation-drawer-width: Default width of the drawer. 280px, matching Figma's own
- *   frame -- overridable by a consumer that needs a different fixed width.
+ *   frame -- overridable by a consumer that needs a different fixed width. Below a 768px viewport
+ *   width, this is overridden by a `@media (max-width: 768px)` rule that forces the existing
+ *   `collapsed` 96px icon-only rail treatment instead (see --bs-navigation-drawer-collapsed-width
+ *   below), so the drawer stops reserving a permanent 280px of layout width on small screens.
  * @prop --bs-navigation-drawer-title-font-family: Title text font family. Aliased to
  *   --bs-typography-font-family-heading.
  * @prop --bs-navigation-drawer-title-font-weight: Title text font weight. Aliased to
@@ -254,4 +257,43 @@
 
 .bs-navigation-drawer__items::-webkit-scrollbar {
   display: none;
+}
+
+/* Below 768px (a standard tablet/small-screen breakpoint, and the narrow end of this component's
+   normal tablet-and-up usage) a permanently-reserved 280px-wide drawer pushes page content down to
+   an unusably narrow remainder on real small-screen viewports (e.g. 390px). This library has no
+   existing width-based @media breakpoint convention to follow (grepping every other component's
+   CSS only turns up `@media (prefers-reduced-motion: reduce)`), so rather than inventing new
+   open/closed overlay API, this reuses the drawer's own existing `collapsed` 96px icon-only rail
+   treatment (see the `:host([collapsed])` rules above) and applies it unconditionally at this
+   width -- same rail, now driven by viewport instead of only by the `collapsed` prop/toggle. Placed
+   last in this file so it wins over the unscoped `.bs-navigation-drawer`/`__title`/etc. rules above
+   on specificity ties, regardless of whether `collapsed` happens to be reflected on the host. */
+@media (max-width: 768px) {
+  .bs-navigation-drawer {
+    width: var(--bs-navigation-drawer-collapsed-width);
+    padding-left: 0;
+    padding-right: 0;
+    align-items: center;
+  }
+
+  .bs-navigation-drawer__logo--full {
+    display: none;
+  }
+
+  .bs-navigation-drawer__logo--mark {
+    display: flex;
+  }
+
+  .bs-navigation-drawer__title {
+    display: none;
+  }
+
+  .bs-navigation-drawer__search {
+    display: none;
+  }
+
+  .bs-navigation-drawer__search-trigger {
+    display: inline-flex;
+  }
 }

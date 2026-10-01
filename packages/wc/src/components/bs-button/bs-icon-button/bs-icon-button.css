@@ -25,8 +25,10 @@
  * @prop --bs-icon-button-subtle-hover: Background, variant="subtle", hover. Aliased to --bs-color-neutral-container.
  * @prop --bs-icon-button-subtle-pressed: Background, variant="subtle", pressed. Aliased to --bs-color-neutral-container-pressed.
  * @prop --bs-icon-button-subtle-focus: Focus ring color, variant="subtle". Aliased to --bs-border-primary-focus.
- * @prop --bs-icon-button-outlined-border: Border color, variant="outlined", default. Aliased to --bs-border-primary.
- * @prop --bs-icon-button-outlined-border-hover: Border color, variant="outlined", hover/pressed. Aliased to --bs-border-primary-hover.
+ * @prop --bs-icon-button-outlined-border: Border color, variant="outlined", default. Aliased to --bs-color-primary-default.
+ * @prop --bs-icon-button-outlined-border-hover: Border color, variant="outlined", hover. Aliased to --bs-color-primary-hover.
+ * @prop --bs-icon-button-outlined-border-pressed: Border color, variant="outlined", pressed. Aliased to --bs-color-primary-pressed.
+ * @prop --bs-icon-button-outlined-text-hover: Icon color, variant="outlined", hover/pressed. Aliased to --bs-text-action-hover.
  * @prop --bs-icon-button-outlined-container: Background, variant="outlined", hover/pressed. Aliased to --bs-color-primary-container.
  * @prop --bs-icon-button-outlined-focus: Focus ring color, variant="outlined". Aliased to --bs-border-primary-focus.
  * @prop --bs-icon-button-success-default: Background, variant="success", default. Aliased to --bs-color-success-default.
@@ -94,8 +96,13 @@
   --bs-icon-button-subtle-pressed: var(--bs-color-neutral-container-pressed);
   --bs-icon-button-subtle-focus: var(--bs-border-primary-focus);
 
-  --bs-icon-button-outlined-border: var(--bs-border-primary);
-  --bs-icon-button-outlined-border-hover: var(--bs-border-primary-hover);
+  /* Verified against Figma node 2842:50233/50230/50227/50224 (bs-button's Style=Outline states) --
+     border/text colors step through brand-600 -> 700 -> 800 across enabled -> hover -> pressed,
+     matching the fix applied to bs-button's own outlined variant. */
+  --bs-icon-button-outlined-border: var(--bs-color-primary-default);
+  --bs-icon-button-outlined-border-hover: var(--bs-color-primary-hover);
+  --bs-icon-button-outlined-border-pressed: var(--bs-color-primary-pressed);
+  --bs-icon-button-outlined-text-hover: var(--bs-text-action-hover);
   --bs-icon-button-outlined-container: var(--bs-color-primary-container);
   --bs-icon-button-outlined-focus: var(--bs-border-primary-focus);
 
@@ -326,16 +333,17 @@
 .bs-icon-button--outlined {
   background: transparent;
   color: var(--bs-color-primary-default);
-  border: 1.5px solid var(--bs-icon-button-outlined-border);
+  border: 1px solid var(--bs-icon-button-outlined-border);
 }
 .bs-icon-button--outlined:hover:not(:disabled) {
   background: var(--bs-icon-button-outlined-container);
   border-color: var(--bs-icon-button-outlined-border-hover);
+  color: var(--bs-icon-button-outlined-text-hover);
 }
 .bs-icon-button--outlined:active:not(:disabled) {
   background: var(--bs-icon-button-outlined-container);
-  color: var(--bs-color-primary-pressed);
-  border-color: var(--bs-icon-button-outlined-border-hover);
+  color: var(--bs-icon-button-outlined-text-hover);
+  border-color: var(--bs-icon-button-outlined-border-pressed);
 }
 .bs-icon-button--outlined:disabled {
   opacity: var(--bs-opacity-disabled);

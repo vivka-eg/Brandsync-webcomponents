@@ -832,7 +832,8 @@ export declare interface BsComposerStatusBanner extends Components.BsComposerSta
 
 @ProxyCmp({
   defineCustomElementFn: defineBsDataTable,
-  inputs: ['cellRenderer', 'columns', 'rows', 'selectable', 'sortColumn', 'sortDirection']
+  inputs: ['cellRenderer', 'columns', 'rows', 'selectable', 'sortColumn', 'sortDirection'],
+  methods: ['clearSelection']
 })
 @Component({
   selector: 'bs-data-table',

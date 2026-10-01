@@ -104,3 +104,28 @@
   flex: 1 0 0;
   min-width: 0;
 }
+
+/* Below 768px (same breakpoint bs-navigation-drawer's own small-screen treatment uses, for
+   consistency -- this library has no other width-based @media precedent to follow, see that
+   component's CSS for the full reasoning), the bar's non-shrinking children (the fixed-width
+   `bs-logo`, flex-shrink: 0 on `__logo`/`__left` above) no longer reliably fit alongside the
+   `right` slot's action icons in a single row at real small-screen widths (e.g. 390px) -- the
+   `right` slot's min-width: 0 lets flexbox squeeze its *container* down, but the icon buttons
+   inside it don't shrink, so they overflow past the logo instead of wrapping, reading as an
+   overlap/collision. Letting the bar wrap, and forcing `right` onto its own full-width row below
+   (rather than an even smaller, unpredictable wrap point), keeps the logo and action icons from
+   ever sharing contested horizontal space. Only `default`/`with-navigation-drawer` need this --
+   `center`'s logo/right are already flex: 1 and absorb the narrower width themselves. */
+@media (max-width: 768px) {
+  .bs-navigation-header--default,
+  .bs-navigation-header--with-navigation-drawer {
+    flex-wrap: wrap;
+    row-gap: var(--bs-navigation-header-slot-gap);
+  }
+
+  .bs-navigation-header--default .bs-navigation-header__right,
+  .bs-navigation-header--with-navigation-drawer .bs-navigation-header__right {
+    flex: 1 1 100%;
+    justify-content: flex-end;
+  }
+}

@@ -62,7 +62,10 @@ describe('bs-snackbar', () => {
       const { root } = await render(<bs-snackbar>Message</bs-snackbar>);
       const close = root.shadowRoot.querySelector('[part="close"]');
       expect(close).not.toBeNull();
-      expect(close).toEqualAttribute('aria-label', 'Dismiss');
+      // bs-icon-button sets aria-label on its OWN inner <button> (inside its own shadow DOM), not
+      // on its host element -- so the accessible name lives one shadow root deeper than `close` itself.
+      const innerButton = close.shadowRoot.querySelector('button');
+      expect(innerButton).toEqualAttribute('aria-label', 'Dismiss');
     });
 
     it('emits bsDismiss when the close button is clicked', async () => {

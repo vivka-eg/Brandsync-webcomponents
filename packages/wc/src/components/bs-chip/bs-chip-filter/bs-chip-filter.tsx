@@ -36,9 +36,14 @@ export class BsChipFilter {
    * constant across sizes, matching the Figma spec exactly. */
   @Prop() size: BsChipFilterSize = 'lg';
 
-  /** Whether the chip reads as toggled on. Mutable so clicking it toggles directly, and
-   * reflected so consumers can target `bs-chip-filter[selected]` via CSS. */
-  @Prop({ mutable: true, reflect: true }) selected = false;
+  /** Whether the chip reads as toggled on. This is the single source of truth for the chip's
+   * visual state -- a controlled component, like a controlled `<input>`. Clicking the chip never
+   * mutates this prop itself; it only emits `bsChange` with the requested new value. If the
+   * consumer doesn't update `selected` in response (e.g. their own validation rejects the
+   * change), the chip's rendering stays exactly as `selected` says, rather than drifting into
+   * some internally-tracked truth. Reflected so consumers can target
+   * `bs-chip-filter[selected]` via CSS. */
+  @Prop({ reflect: true }) selected = false;
 
   /** Shows a trailing dropdown caret, signaling this chip opens a menu of further options.
    * Purely a visual affordance -- wire up the actual menu (e.g. `bs-menu`) yourself. */
@@ -78,8 +83,7 @@ export class BsChipFilter {
   };
 
   private onClick = () => {
-    this.selected = !this.selected;
-    this.bsChange.emit(this.selected);
+    this.bsChange.emit(!this.selected);
   };
 
   render() {

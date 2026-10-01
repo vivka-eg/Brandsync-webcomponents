@@ -28,7 +28,13 @@ A sortable, optionally row-selectable table for tabular data.
 
 ## Selectable rows
 
-Adds a checkbox column; toggling one emits `bsRowSelect`.
+Adds a checkbox column; toggling a row's checkbox emits `bsRowSelect`. The header row also gets a
+select-all checkbox: checked when every row is selected, indeterminate when some-but-not-all rows
+are selected, and unchecked when none are. Toggling it selects or deselects every row and emits
+`bsRowSelect` for each one — it reuses the same event individual row checkboxes use, so consumers
+only need one listener. Call the `clearSelection()` method to reset selection state programmatically
+(e.g. after a bulk action) without remounting the table; it also emits `bsRowSelect` for each row
+that was selected, so parent-held state stays in sync.
 
 <Canvas of={DataTableStories.Selectable} />
 
@@ -61,11 +67,18 @@ usage.
 | Event | Detail | Fires when |
 |---|---|---|
 | `bsSort` | `{ column: string; direction: 'asc' \| 'desc' }` | a sortable header is activated |
-| `bsRowSelect` | `{ id: string \| number; selected: boolean }` | a row checkbox is toggled |
+| `bsRowSelect` | `{ id: string \| number; selected: boolean }` | a row checkbox is toggled, the select-all checkbox is toggled (once per row), or `clearSelection()` is called (once per previously-selected row) |
+
+| Method | Signature | Does |
+|---|---|---|
+| `clearSelection` | `() => Promise<void>` | Resets row selection to none and emits `bsRowSelect` for each row that was selected |
 
 **Customization surface** (see `CONVENTIONS.md` in the repo root for the full convention):
 - Shadow parts: `::part(table)`, `::part(head)`, `::part(body)`, `::part(row)`,
   `::part(header-cell)`, `::part(cell)`
+- CSS custom properties: `--bs-data-table-cell-padding-x` (default `--bs-spacing-300`, 24px) and
+  `--bs-data-table-cell-padding-y` (default `--bs-spacing-200`, 16px) — override either to tighten
+  cell padding for dense layouts, e.g. `bs-data-table { --bs-data-table-cell-padding-x: 12px; }`.
 
 ## Accessibility
 
@@ -75,3 +88,6 @@ usage.
   sort state — not just a mouse-only `onClick` on the header cell.
 - Row selection uses a native `<input type="checkbox">`, so it's independently
   keyboard/AT-accessible with no extra wiring.
+- The select-all checkbox has `aria-label="Select all rows"` since it has no adjacent visible text
+  label, and uses the native `indeterminate` property so assistive tech announces the
+  some-but-not-all state correctly.

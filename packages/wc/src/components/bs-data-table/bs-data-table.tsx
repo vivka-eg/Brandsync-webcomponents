@@ -1,4 +1,4 @@
-import { Component, Prop, State, Event, EventEmitter, h } from '@stencil/core';
+import { Component, Prop, State, Event, EventEmitter, Method, h } from '@stencil/core';
 
 export interface BsDataTableColumn {
   key: string;
@@ -73,13 +73,44 @@ export class BsDataTable {
     this.bsRowSelect.emit({ id: row.id, selected });
   };
 
+  private onSelectAllChange = (ev: Event) => {
+    const selected = (ev.target as HTMLInputElement).checked;
+    this.selectedIds = selected ? new Set(this.rows.map(row => row.id)) : new Set();
+    for (const row of this.rows) {
+      this.bsRowSelect.emit({ id: row.id, selected });
+    }
+  };
+
+  /** Clears the current row selection and emits `bsRowSelect` for each row that was selected, so
+   * parent-held selection state stays in sync. Lets consumers reset selection without remounting
+   * the whole table. */
+  @Method()
+  async clearSelection(): Promise<void> {
+    const previouslySelected = Array.from(this.selectedIds);
+    this.selectedIds = new Set();
+    for (const id of previouslySelected) {
+      this.bsRowSelect.emit({ id, selected: false });
+    }
+  }
 
   render() {
     return (
       <table part="table" class="bs-data-table">
         <thead part="head">
           <tr>
-            {this.selectable && <th class="bs-data-table__select-col"></th>}
+            {this.selectable && (
+              <th class="bs-data-table__select-col">
+                {this.rows.length > 0 && (
+                  <input
+                    type="checkbox"
+                    aria-label="Select all rows"
+                    checked={this.selectedIds.size > 0 && this.selectedIds.size === this.rows.length}
+                    indeterminate={this.selectedIds.size > 0 && this.selectedIds.size < this.rows.length}
+                    onChange={this.onSelectAllChange}
+                  />
+                )}
+              </th>
+            )}
             {this.columns.map(column => {
               const isSorted = this.sortColumn === column.key;
               const ariaSort = column.sortable ? (isSorted ? (this.sortDirection === 'asc' ? 'ascending' : 'descending') : 'none') : undefined;

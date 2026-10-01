@@ -1,6 +1,18 @@
 import { Component, Event, EventEmitter, Prop, h } from '@stencil/core';
+import type { BsButtonVariant } from '../bs-button/bs-button/bs-button';
 
 export type BsSnackbarVariant = 'default' | 'info' | 'warning' | 'success' | 'error';
+
+// Maps each snackbar variant to the bs-button variant its action button composes -- 'default'
+// (the dark neutral bar) uses 'outlined' since there's no bs-button variant tuned for a dark
+// surface; every colored variant maps 1:1 to the same-named bs-button variant.
+const ACTION_VARIANT: Record<BsSnackbarVariant, BsButtonVariant> = {
+  default: 'outlined',
+  info: 'info',
+  warning: 'warning',
+  success: 'success',
+  error: 'error',
+};
 
 /**
  * A transient status bar for confirming the result of an action (e.g. "Files uploaded
@@ -86,13 +98,13 @@ export class BsSnackbar {
         </div>
         <div class="bs-snackbar__actions">
           {this.actionLabel && (
-            <button part="action" type="button" class="bs-snackbar__action" onClick={this.onAction}>
+            <bs-button part="action" variant={ACTION_VARIANT[this.variant]} size="sm" onClick={this.onAction}>
               {this.actionLabel}
-            </button>
+            </bs-button>
           )}
-          <button part="close" type="button" class="bs-snackbar__close" aria-label="Dismiss" onClick={this.onDismiss}>
+          <bs-icon-button part="close" variant="subtle" size="md" ariaLabel="Dismiss" onClick={this.onDismiss}>
             <CloseIcon />
-          </button>
+          </bs-icon-button>
         </div>
       </div>
     );

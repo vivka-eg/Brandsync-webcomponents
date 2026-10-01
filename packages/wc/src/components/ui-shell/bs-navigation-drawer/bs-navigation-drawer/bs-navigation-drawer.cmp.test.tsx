@@ -1,4 +1,5 @@
 import { render, h, describe, it, expect } from '@stencil/vitest';
+import { page } from 'vitest/browser';
 
 describe('bs-navigation-drawer', () => {
   it('renders a <nav> landmark with the logo', async () => {
@@ -152,6 +153,11 @@ describe('bs-navigation-drawer', () => {
     });
 
     it('hides the search-trigger button when not collapsed', async () => {
+      // The default test viewport (414px) is inside this component's own <= 768px small-screen
+      // breakpoint (see bs-navigation-drawer.css), which forces the same visual treatment as
+      // `collapsed` regardless of the prop -- widen the viewport here so this test is isolated to
+      // the `collapsed` *prop*'s own behavior, not the viewport-driven treatment.
+      await page.viewport(1024, 768);
       const { root } = await render(<bs-navigation-drawer></bs-navigation-drawer>);
       const trigger = root.shadowRoot.querySelector('[part="search-trigger"]');
       expect(getComputedStyle(trigger as Element).display).toBe('none');

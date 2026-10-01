@@ -54,57 +54,59 @@ accessible name.
 
 ## CSS Custom Properties
 
-| Name                                      | Description                                                                                                                                                                               |
-| ----------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `--bs-icon-button-error-default`          | Background, variant="error", default. Aliased to --bs-color-error-default.                                                                                                                |
-| `--bs-icon-button-error-disabled`         | Background, variant="error", disabled. Aliased to --bs-surface-action-disabled.                                                                                                           |
-| `--bs-icon-button-error-focus`            | Focus ring color, variant="error". Aliased to --bs-border-error-focus.                                                                                                                    |
-| `--bs-icon-button-error-hover`            | Background, variant="error", hover. Aliased to --bs-color-error-hover.                                                                                                                    |
-| `--bs-icon-button-error-pressed`          | Background, variant="error", pressed. Aliased to --bs-color-error-pressed.                                                                                                                |
-| `--bs-icon-button-icon-size-lg`           | Slotted icon width/height at size="lg". 24px.                                                                                                                                             |
-| `--bs-icon-button-icon-size-md`           | Slotted icon width/height at size="md". 20px.                                                                                                                                             |
-| `--bs-icon-button-icon-size-sm`           | Slotted icon width/height at size="sm". 16px.                                                                                                                                             |
-| `--bs-icon-button-icon-size-xs`           | Slotted icon width/height at size="xs". 8px.                                                                                                                                              |
-| `--bs-icon-button-info-default`           | Background, variant="info", default. Aliased to --bs-color-info-default.                                                                                                                  |
-| `--bs-icon-button-info-disabled`          | Background, variant="info", disabled. Aliased to --bs-surface-action-disabled.                                                                                                            |
-| `--bs-icon-button-info-focus`             | Focus ring color, variant="info". Aliased to --bs-border-info-focus.                                                                                                                      |
-| `--bs-icon-button-info-hover`             | Background, variant="info", hover. Aliased to --bs-color-info-hover.                                                                                                                      |
-| `--bs-icon-button-info-pressed`           | Background, variant="info", pressed. Aliased to --bs-color-info-pressed.                                                                                                                  |
-| `--bs-icon-button-neutral-border`         | Border color, variant="neutral", default/disabled. Aliased to --bs-border-neutral-container.                                                                                              |
-| `--bs-icon-button-neutral-border-hover`   | Border color, variant="neutral", hover. Aliased to --bs-border-neutral-container-hover.                                                                                                   |
-| `--bs-icon-button-neutral-border-pressed` | Border color, variant="neutral", pressed. Aliased to --bs-border-neutral-container-pressed.                                                                                               |
-| `--bs-icon-button-neutral-container`      | Background, variant="neutral", default/disabled. Aliased to --bs-color-neutral-container.                                                                                                 |
-| `--bs-icon-button-neutral-hover`          | Background, variant="neutral", hover. Aliased to --bs-color-neutral-container-hover.                                                                                                      |
-| `--bs-icon-button-neutral-pressed`        | Background, variant="neutral", pressed. Aliased to --bs-color-neutral-container-pressed.                                                                                                  |
-| `--bs-icon-button-outlined-border`        | Border color, variant="outlined", default. Aliased to --bs-border-primary.                                                                                                                |
-| `--bs-icon-button-outlined-border-hover`  | Border color, variant="outlined", hover/pressed. Aliased to --bs-border-primary-hover.                                                                                                    |
-| `--bs-icon-button-outlined-container`     | Background, variant="outlined", hover/pressed. Aliased to --bs-color-primary-container.                                                                                                   |
-| `--bs-icon-button-outlined-focus`         | Focus ring color, variant="outlined". Aliased to --bs-border-primary-focus.                                                                                                               |
-| `--bs-icon-button-padding`                | Padding on all sides, all sizes (constant -- centers the icon inside the container at every size). Aliased to --bs-spacing-150.                                                           |
-| `--bs-icon-button-padding-xs`             | Padding on all sides, size="xs" only -- distinct from --bs-icon-button-padding, since 16px/8px icon math (4px) differs from the sm/md/lg constant (12px). Aliased to --bs-spacing-50.     |
-| `--bs-icon-button-primary-default`        | Background, variant="primary", default. Aliased to --bs-color-primary-default.                                                                                                            |
-| `--bs-icon-button-primary-disabled`       | Background, variant="primary", disabled. Aliased to --bs-surface-action-disabled.                                                                                                         |
-| `--bs-icon-button-primary-hover`          | Background, variant="primary", hover. Aliased to --bs-color-primary-hover.                                                                                                                |
-| `--bs-icon-button-primary-pressed`        | Background, variant="primary", pressed. Aliased to --bs-color-primary-pressed.                                                                                                            |
-| `--bs-icon-button-radius`                 | Corner radius, size="sm"/"md"/"lg". Aliased to --bs-border-radius-100.                                                                                                                    |
-| `--bs-icon-button-radius-xs`              | Corner radius, size="xs" -- a smaller radius than --bs-icon-button-radius, since --bs-border-radius-100 (8px) on a 16px box would look nearly circular. Aliased to --bs-border-radius-50. |
-| `--bs-icon-button-size-lg`                | Container width/height at size="lg". 48px.                                                                                                                                                |
-| `--bs-icon-button-size-md`                | Container width/height at size="md". 44px.                                                                                                                                                |
-| `--bs-icon-button-size-sm`                | Container width/height at size="sm". 40px.                                                                                                                                                |
-| `--bs-icon-button-size-xs`                | Container width/height at size="xs". 16px.                                                                                                                                                |
-| `--bs-icon-button-subtle-focus`           | Focus ring color, variant="subtle". Aliased to --bs-border-primary-focus.                                                                                                                 |
-| `--bs-icon-button-subtle-hover`           | Background, variant="subtle", hover. Aliased to --bs-color-neutral-container.                                                                                                             |
-| `--bs-icon-button-subtle-pressed`         | Background, variant="subtle", pressed. Aliased to --bs-color-neutral-container-pressed.                                                                                                   |
-| `--bs-icon-button-success-default`        | Background, variant="success", default. Aliased to --bs-color-success-default.                                                                                                            |
-| `--bs-icon-button-success-disabled`       | Background, variant="success", disabled. Aliased to --bs-surface-action-disabled.                                                                                                         |
-| `--bs-icon-button-success-focus`          | Focus ring color, variant="success". Aliased to --bs-border-success-focus.                                                                                                                |
-| `--bs-icon-button-success-hover`          | Background, variant="success", hover. Aliased to --bs-color-success-hover.                                                                                                                |
-| `--bs-icon-button-success-pressed`        | Background, variant="success", pressed. Aliased to --bs-color-success-pressed.                                                                                                            |
-| `--bs-icon-button-warning-default`        | Background, variant="warning", default. Aliased to --bs-color-warning-default.                                                                                                            |
-| `--bs-icon-button-warning-disabled`       | Background, variant="warning", disabled. Aliased to --bs-surface-action-disabled.                                                                                                         |
-| `--bs-icon-button-warning-focus`          | Focus ring color, variant="warning". Aliased to --bs-border-warning-focus.                                                                                                                |
-| `--bs-icon-button-warning-hover`          | Background, variant="warning", hover. Aliased to --bs-color-warning-hover.                                                                                                                |
-| `--bs-icon-button-warning-pressed`        | Background, variant="warning", pressed. Aliased to --bs-color-warning-pressed.                                                                                                            |
+| Name                                       | Description                                                                                                                                                                               |
+| ------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `--bs-icon-button-error-default`           | Background, variant="error", default. Aliased to --bs-color-error-default.                                                                                                                |
+| `--bs-icon-button-error-disabled`          | Background, variant="error", disabled. Aliased to --bs-surface-action-disabled.                                                                                                           |
+| `--bs-icon-button-error-focus`             | Focus ring color, variant="error". Aliased to --bs-border-error-focus.                                                                                                                    |
+| `--bs-icon-button-error-hover`             | Background, variant="error", hover. Aliased to --bs-color-error-hover.                                                                                                                    |
+| `--bs-icon-button-error-pressed`           | Background, variant="error", pressed. Aliased to --bs-color-error-pressed.                                                                                                                |
+| `--bs-icon-button-icon-size-lg`            | Slotted icon width/height at size="lg". 24px.                                                                                                                                             |
+| `--bs-icon-button-icon-size-md`            | Slotted icon width/height at size="md". 20px.                                                                                                                                             |
+| `--bs-icon-button-icon-size-sm`            | Slotted icon width/height at size="sm". 16px.                                                                                                                                             |
+| `--bs-icon-button-icon-size-xs`            | Slotted icon width/height at size="xs". 8px.                                                                                                                                              |
+| `--bs-icon-button-info-default`            | Background, variant="info", default. Aliased to --bs-color-info-default.                                                                                                                  |
+| `--bs-icon-button-info-disabled`           | Background, variant="info", disabled. Aliased to --bs-surface-action-disabled.                                                                                                            |
+| `--bs-icon-button-info-focus`              | Focus ring color, variant="info". Aliased to --bs-border-info-focus.                                                                                                                      |
+| `--bs-icon-button-info-hover`              | Background, variant="info", hover. Aliased to --bs-color-info-hover.                                                                                                                      |
+| `--bs-icon-button-info-pressed`            | Background, variant="info", pressed. Aliased to --bs-color-info-pressed.                                                                                                                  |
+| `--bs-icon-button-neutral-border`          | Border color, variant="neutral", default/disabled. Aliased to --bs-border-neutral-container.                                                                                              |
+| `--bs-icon-button-neutral-border-hover`    | Border color, variant="neutral", hover. Aliased to --bs-border-neutral-container-hover.                                                                                                   |
+| `--bs-icon-button-neutral-border-pressed`  | Border color, variant="neutral", pressed. Aliased to --bs-border-neutral-container-pressed.                                                                                               |
+| `--bs-icon-button-neutral-container`       | Background, variant="neutral", default/disabled. Aliased to --bs-color-neutral-container.                                                                                                 |
+| `--bs-icon-button-neutral-hover`           | Background, variant="neutral", hover. Aliased to --bs-color-neutral-container-hover.                                                                                                      |
+| `--bs-icon-button-neutral-pressed`         | Background, variant="neutral", pressed. Aliased to --bs-color-neutral-container-pressed.                                                                                                  |
+| `--bs-icon-button-outlined-border`         | Border color, variant="outlined", default. Aliased to --bs-color-primary-default.                                                                                                         |
+| `--bs-icon-button-outlined-border-hover`   | Border color, variant="outlined", hover. Aliased to --bs-color-primary-hover.                                                                                                             |
+| `--bs-icon-button-outlined-border-pressed` | Border color, variant="outlined", pressed. Aliased to --bs-color-primary-pressed.                                                                                                         |
+| `--bs-icon-button-outlined-container`      | Background, variant="outlined", hover/pressed. Aliased to --bs-color-primary-container.                                                                                                   |
+| `--bs-icon-button-outlined-focus`          | Focus ring color, variant="outlined". Aliased to --bs-border-primary-focus.                                                                                                               |
+| `--bs-icon-button-outlined-text-hover`     | Icon color, variant="outlined", hover/pressed. Aliased to --bs-text-action-hover.                                                                                                         |
+| `--bs-icon-button-padding`                 | Padding on all sides, all sizes (constant -- centers the icon inside the container at every size). Aliased to --bs-spacing-150.                                                           |
+| `--bs-icon-button-padding-xs`              | Padding on all sides, size="xs" only -- distinct from --bs-icon-button-padding, since 16px/8px icon math (4px) differs from the sm/md/lg constant (12px). Aliased to --bs-spacing-50.     |
+| `--bs-icon-button-primary-default`         | Background, variant="primary", default. Aliased to --bs-color-primary-default.                                                                                                            |
+| `--bs-icon-button-primary-disabled`        | Background, variant="primary", disabled. Aliased to --bs-surface-action-disabled.                                                                                                         |
+| `--bs-icon-button-primary-hover`           | Background, variant="primary", hover. Aliased to --bs-color-primary-hover.                                                                                                                |
+| `--bs-icon-button-primary-pressed`         | Background, variant="primary", pressed. Aliased to --bs-color-primary-pressed.                                                                                                            |
+| `--bs-icon-button-radius`                  | Corner radius, size="sm"/"md"/"lg". Aliased to --bs-border-radius-100.                                                                                                                    |
+| `--bs-icon-button-radius-xs`               | Corner radius, size="xs" -- a smaller radius than --bs-icon-button-radius, since --bs-border-radius-100 (8px) on a 16px box would look nearly circular. Aliased to --bs-border-radius-50. |
+| `--bs-icon-button-size-lg`                 | Container width/height at size="lg". 48px.                                                                                                                                                |
+| `--bs-icon-button-size-md`                 | Container width/height at size="md". 44px.                                                                                                                                                |
+| `--bs-icon-button-size-sm`                 | Container width/height at size="sm". 40px.                                                                                                                                                |
+| `--bs-icon-button-size-xs`                 | Container width/height at size="xs". 16px.                                                                                                                                                |
+| `--bs-icon-button-subtle-focus`            | Focus ring color, variant="subtle". Aliased to --bs-border-primary-focus.                                                                                                                 |
+| `--bs-icon-button-subtle-hover`            | Background, variant="subtle", hover. Aliased to --bs-color-neutral-container.                                                                                                             |
+| `--bs-icon-button-subtle-pressed`          | Background, variant="subtle", pressed. Aliased to --bs-color-neutral-container-pressed.                                                                                                   |
+| `--bs-icon-button-success-default`         | Background, variant="success", default. Aliased to --bs-color-success-default.                                                                                                            |
+| `--bs-icon-button-success-disabled`        | Background, variant="success", disabled. Aliased to --bs-surface-action-disabled.                                                                                                         |
+| `--bs-icon-button-success-focus`           | Focus ring color, variant="success". Aliased to --bs-border-success-focus.                                                                                                                |
+| `--bs-icon-button-success-hover`           | Background, variant="success", hover. Aliased to --bs-color-success-hover.                                                                                                                |
+| `--bs-icon-button-success-pressed`         | Background, variant="success", pressed. Aliased to --bs-color-success-pressed.                                                                                                            |
+| `--bs-icon-button-warning-default`         | Background, variant="warning", default. Aliased to --bs-color-warning-default.                                                                                                            |
+| `--bs-icon-button-warning-disabled`        | Background, variant="warning", disabled. Aliased to --bs-surface-action-disabled.                                                                                                         |
+| `--bs-icon-button-warning-focus`           | Focus ring color, variant="warning". Aliased to --bs-border-warning-focus.                                                                                                                |
+| `--bs-icon-button-warning-hover`           | Background, variant="warning", hover. Aliased to --bs-color-warning-hover.                                                                                                                |
+| `--bs-icon-button-warning-pressed`         | Background, variant="warning", pressed. Aliased to --bs-color-warning-pressed.                                                                                                            |
 
 
 ## Dependencies
@@ -113,12 +115,14 @@ accessible name.
 
  - [bs-attachment](../../bs-attachment)
  - [bs-dialog](../../bs-dialog)
+ - [bs-snackbar](../../bs-snackbar)
 
 ### Graph
 ```mermaid
 graph TD;
   bs-attachment --> bs-icon-button
   bs-dialog --> bs-icon-button
+  bs-snackbar --> bs-icon-button
   style bs-icon-button fill:#f9f,stroke:#333,stroke-width:4px
 ```
 

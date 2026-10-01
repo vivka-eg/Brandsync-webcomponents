@@ -94,15 +94,24 @@ export class BsComposer {
    * The field is a `<textarea>` (not a single-line `<input>`) that grows with its content, up to
    * `--bs-composer-input-max-lines` (10 by default) -- beyond that it scrolls internally instead
    * of growing further. Setting `value` as a prop (not just typing) also re-triggers the resize,
-   * so e.g. programmatically clearing the field after submit correctly shrinks it back down. */
-  @Prop() value = '';
+   * so e.g. programmatically clearing the field after submit correctly shrinks it back down.
+   *
+   * Mutable: kept in sync with the real `<textarea>`'s content on every keystroke (see `onInput`),
+   * not pushed one-way from the outside only. Without this, typing alone never updates this prop,
+   * so a consumer re-setting `value` to e.g. `''` after the user had typed something would be a
+   * no-op (same as the never-updated internal value) and silently fail to clear the field. */
+  @Prop({ mutable: true }) value = '';
 
   /**
    * Which of the four mutually-exclusive composer states to render: `idle` (send, enabled),
    * `generating` (stop, while the AI is responding), `disabled` (send, but not interactive), or
    * `recording` (voice input in progress -- shows a waveform and a confirm action).
+   *
+   * Reflects to a `state` attribute on the host, so a consumer can target a specific state from
+   * outside via a CSS attribute selector (e.g. `bs-composer[state="recording"]`) or by querying
+   * for it in JS, the same way `bs-input`'s `open` prop reflects.
    */
-  @Prop() state: BsComposerState = 'idle';
+  @Prop({ reflect: true }) state: BsComposerState = 'idle';
 
   /**
    * Accessible name for the text field. This component has no visible `<label>` (chat composers
@@ -176,8 +185,22 @@ export class BsComposer {
 
   private onInput = (ev: InputEvent) => {
     const value = (ev.target as HTMLTextAreaElement).value;
+    // Keep the `value` prop in sync with what was actually typed -- see `value`'s doc comment for
+    // why this is required for an external `value` prop change (e.g. clearing after submit) to
+    // reliably take effect afterwards.
+    this.value = value;
     this.resizeInput();
     this.bsInput.emit(value);
+  };
+
+  /** Enter alone sends (re-using the exact same per-state action the primary button's own click
+   * handler performs), Shift+Enter inserts a normal newline -- standard chat-composer convention.
+   * No-ops while `disabled` (the native `disabled` attribute already blocks all input, but this
+   * guards the emit here too, for symmetry with the action button's own disabled check). */
+  private onInputKeydown = (ev: KeyboardEvent) => {
+    if (ev.key !== 'Enter' || ev.shiftKey || this.state === 'disabled') return;
+    ev.preventDefault();
+    this.onActionClick();
   };
 
   private onAttachClick = () => {
@@ -231,6 +254,7 @@ export class BsComposer {
             disabled={disabled}
             aria-label={this.ariaLabel}
             onInput={this.onInput}
+            onKeyDown={this.onInputKeydown}
           ></textarea>
         </div>
         <div class="bs-composer__controls-row">

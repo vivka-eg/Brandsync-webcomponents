@@ -36,8 +36,10 @@ signals it opens a menu of further options.
 ## Selected
 
 `selected` toggles the chip to its "on" reading — a dark filled background with inverse (white)
-text, instead of the default light container background with dark text. Mutable and reflected, so
-clicking the chip toggles it directly and `bs-chip-filter[selected]` is a valid CSS selector.
+text, instead of the default light container background with dark text. This is a controlled
+prop: clicking the chip never flips it internally, it only emits `bsChange` with the requested
+new value, so you must update `selected` yourself in response (like a controlled `<input>`).
+It's reflected, so `bs-chip-filter[selected]` is a valid CSS selector.
 
 <Canvas of={ChipFilterStories.Selected} />
 

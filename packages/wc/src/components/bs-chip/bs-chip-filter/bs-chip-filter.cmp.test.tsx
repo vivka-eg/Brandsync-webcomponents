@@ -16,7 +16,7 @@ describe('bs-chip-filter', () => {
     expect(button).toHaveClass('bs-chip-filter--selected');
   });
 
-  it('clicking toggles selected and emits bsChange with the new value', async () => {
+  it('clicking emits bsChange with the requested new value, without mutating selected itself', async () => {
     const { root, waitForChanges, spyOnEvent } = await render(<bs-chip-filter>Label</bs-chip-filter>);
     const bsChangeSpy = spyOnEvent('bsChange');
     const button = root.shadowRoot.querySelector('button') as HTMLButtonElement;
@@ -24,16 +24,33 @@ describe('bs-chip-filter', () => {
     button.click();
     await waitForChanges();
 
-    expect((root as HTMLElement & { selected: boolean }).selected).toBe(true);
     expect(bsChangeSpy).toHaveReceivedEventTimes(1);
     expect(bsChangeSpy).toHaveReceivedEventDetail(true);
+    // The chip is controlled: it never flips its own `selected` prop on click.
+    expect((root as HTMLElement & { selected: boolean }).selected).toBe(false);
+  });
+
+  it('is a controlled component: if the parent does not update selected in response to bsChange, the chip stays at its current prop value', async () => {
+    const { root, waitForChanges, spyOnEvent } = await render(<bs-chip-filter selected={false}>Label</bs-chip-filter>);
+    const bsChangeSpy = spyOnEvent('bsChange');
+    const button = root.shadowRoot.querySelector('button') as HTMLButtonElement;
 
     button.click();
     await waitForChanges();
 
+    // Event requests the change...
+    expect(bsChangeSpy).toHaveReceivedEventDetail(true);
+    // ...but since the "parent" never updated the selected prop (simulating a rejected change),
+    // the chip's rendered/visual state must still match the prop, not drift into its own truth.
     expect((root as HTMLElement & { selected: boolean }).selected).toBe(false);
-    expect(bsChangeSpy).toHaveReceivedEventTimes(2);
-    expect(bsChangeSpy).toHaveReceivedEventDetail(false);
+    expect(button).toEqualAttribute('aria-pressed', 'false');
+    expect(button).not.toHaveClass('bs-chip-filter--selected');
+
+    // Only an explicit prop update (what a real controlled parent would do) changes the display.
+    (root as HTMLElement & { selected: boolean }).selected = true;
+    await waitForChanges();
+    expect(button).toEqualAttribute('aria-pressed', 'true');
+    expect(button).toHaveClass('bs-chip-filter--selected');
   });
 
   describe('disabled', () => {
@@ -51,7 +68,6 @@ describe('bs-chip-filter', () => {
       button.click();
       await waitForChanges();
 
-      expect((root as HTMLElement & { selected: boolean }).selected).toBe(false);
       expect(bsChangeSpy).toHaveReceivedEventTimes(0);
     });
   });

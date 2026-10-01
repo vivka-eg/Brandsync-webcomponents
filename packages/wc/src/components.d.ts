@@ -820,7 +820,7 @@ export namespace Components {
          */
         "dropdown": boolean;
         /**
-          * Whether the chip reads as toggled on. Mutable so clicking it toggles directly, and reflected so consumers can target `bs-chip-filter[selected]` via CSS.
+          * Whether the chip reads as toggled on. This is the single source of truth for the chip's visual state -- a controlled component, like a controlled `<input>`. Clicking the chip never mutates this prop itself; it only emits `bsChange` with the requested new value. If the consumer doesn't update `selected` in response (e.g. their own validation rejects the change), the chip's rendering stays exactly as `selected` says, rather than drifting into some internally-tracked truth. Reflected so consumers can target `bs-chip-filter[selected]` via CSS.
           * @default false
          */
         "selected": boolean;
@@ -931,12 +931,12 @@ export namespace Components {
          */
         "placeholder"?: string;
         /**
-          * Which of the four mutually-exclusive composer states to render: `idle` (send, enabled), `generating` (stop, while the AI is responding), `disabled` (send, but not interactive), or `recording` (voice input in progress -- shows a waveform and a confirm action).
+          * Which of the four mutually-exclusive composer states to render: `idle` (send, enabled), `generating` (stop, while the AI is responding), `disabled` (send, but not interactive), or `recording` (voice input in progress -- shows a waveform and a confirm action).  Reflects to a `state` attribute on the host, so a consumer can target a specific state from outside via a CSS attribute selector (e.g. `bs-composer[state="recording"]`) or by querying for it in JS, the same way `bs-input`'s `open` prop reflects.
           * @default 'idle'
          */
         "state": BsComposerState;
         /**
-          * Current text value. Native `input` events don't cross the Shadow DOM boundary, so this component re-dispatches them as a `bsInput` custom event instead.  The field is a `<textarea>` (not a single-line `<input>`) that grows with its content, up to `--bs-composer-input-max-lines` (10 by default) -- beyond that it scrolls internally instead of growing further. Setting `value` as a prop (not just typing) also re-triggers the resize, so e.g. programmatically clearing the field after submit correctly shrinks it back down.
+          * Current text value. Native `input` events don't cross the Shadow DOM boundary, so this component re-dispatches them as a `bsInput` custom event instead.  The field is a `<textarea>` (not a single-line `<input>`) that grows with its content, up to `--bs-composer-input-max-lines` (10 by default) -- beyond that it scrolls internally instead of growing further. Setting `value` as a prop (not just typing) also re-triggers the resize, so e.g. programmatically clearing the field after submit correctly shrinks it back down.  Mutable: kept in sync with the real `<textarea>`'s content on every keystroke (see `onInput`), not pushed one-way from the outside only. Without this, typing alone never updates this prop, so a consumer re-setting `value` to e.g. `''` after the user had typed something would be a no-op (same as the never-updated internal value) and silently fail to clear the field.
           * @default ''
          */
         "value": string;
@@ -1057,6 +1057,10 @@ export namespace Components {
           * Optional custom cell renderer, e.g. for an actions column. Function props are JS-property-only, same as array props -- there is no attribute equivalent. Falls back to the raw cell value.
          */
         "cellRenderer"?: (row: BsDataTableRow, column: BsDataTableColumn) => string;
+        /**
+          * Clears the current row selection and emits `bsRowSelect` for each row that was selected, so parent-held selection state stays in sync. Lets consumers reset selection without remounting the whole table.
+         */
+        "clearSelection": () => Promise<void>;
         /**
           * Array prop -- must be set as a JS property (`el.columns = [...]`), not an HTML attribute, since attributes can only carry strings. See CONVENTIONS.md.
           * @default []
@@ -4736,7 +4740,7 @@ declare namespace LocalJSX {
          */
         "onBsChange"?: (event: BsChipFilterCustomEvent<boolean>) => void;
         /**
-          * Whether the chip reads as toggled on. Mutable so clicking it toggles directly, and reflected so consumers can target `bs-chip-filter[selected]` via CSS.
+          * Whether the chip reads as toggled on. This is the single source of truth for the chip's visual state -- a controlled component, like a controlled `<input>`. Clicking the chip never mutates this prop itself; it only emits `bsChange` with the requested new value. If the consumer doesn't update `selected` in response (e.g. their own validation rejects the change), the chip's rendering stays exactly as `selected` says, rather than drifting into some internally-tracked truth. Reflected so consumers can target `bs-chip-filter[selected]` via CSS.
           * @default false
          */
         "selected"?: boolean;
@@ -4879,12 +4883,12 @@ declare namespace LocalJSX {
          */
         "placeholder"?: string;
         /**
-          * Which of the four mutually-exclusive composer states to render: `idle` (send, enabled), `generating` (stop, while the AI is responding), `disabled` (send, but not interactive), or `recording` (voice input in progress -- shows a waveform and a confirm action).
+          * Which of the four mutually-exclusive composer states to render: `idle` (send, enabled), `generating` (stop, while the AI is responding), `disabled` (send, but not interactive), or `recording` (voice input in progress -- shows a waveform and a confirm action).  Reflects to a `state` attribute on the host, so a consumer can target a specific state from outside via a CSS attribute selector (e.g. `bs-composer[state="recording"]`) or by querying for it in JS, the same way `bs-input`'s `open` prop reflects.
           * @default 'idle'
          */
         "state"?: BsComposerState;
         /**
-          * Current text value. Native `input` events don't cross the Shadow DOM boundary, so this component re-dispatches them as a `bsInput` custom event instead.  The field is a `<textarea>` (not a single-line `<input>`) that grows with its content, up to `--bs-composer-input-max-lines` (10 by default) -- beyond that it scrolls internally instead of growing further. Setting `value` as a prop (not just typing) also re-triggers the resize, so e.g. programmatically clearing the field after submit correctly shrinks it back down.
+          * Current text value. Native `input` events don't cross the Shadow DOM boundary, so this component re-dispatches them as a `bsInput` custom event instead.  The field is a `<textarea>` (not a single-line `<input>`) that grows with its content, up to `--bs-composer-input-max-lines` (10 by default) -- beyond that it scrolls internally instead of growing further. Setting `value` as a prop (not just typing) also re-triggers the resize, so e.g. programmatically clearing the field after submit correctly shrinks it back down.  Mutable: kept in sync with the real `<textarea>`'s content on every keystroke (see `onInput`), not pushed one-way from the outside only. Without this, typing alone never updates this prop, so a consumer re-setting `value` to e.g. `''` after the user had typed something would be a no-op (same as the never-updated internal value) and silently fail to clear the field.
           * @default ''
          */
         "value"?: string;

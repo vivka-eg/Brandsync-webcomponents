@@ -90,6 +90,34 @@ describe('bs-composer', () => {
     expect(spy).toHaveReceivedEventDetail('a');
   });
 
+  describe('value prop sync', () => {
+    it('keeps the value prop in sync with what was typed, not stuck at the initial value', async () => {
+      const { root } = await render(<bs-composer></bs-composer>);
+      const element = root as HTMLElement & { value: string };
+      const textarea = root.shadowRoot.querySelector('textarea') as HTMLTextAreaElement;
+
+      textarea.value = 'hello';
+      textarea.dispatchEvent(new Event('input', { bubbles: true, composed: true }));
+
+      expect(element.value).toBe('hello');
+    });
+
+    it('clears the textarea when value is programmatically reset to "" after the user typed something', async () => {
+      const { root, setProps, waitForChanges } = await render(<bs-composer></bs-composer>);
+      const textarea = root.shadowRoot.querySelector('textarea') as HTMLTextAreaElement;
+
+      textarea.value = 'hello';
+      textarea.dispatchEvent(new Event('input', { bubbles: true, composed: true }));
+      await waitForChanges();
+      expect(textarea.value).toBe('hello');
+
+      await setProps({ value: '' });
+      await waitForChanges();
+
+      expect(textarea.value).toBe('');
+    });
+  });
+
   describe('auto-grow', () => {
     it('grows taller as multi-line content is typed', async () => {
       const { root } = await render(<bs-composer></bs-composer>);
@@ -172,6 +200,28 @@ describe('bs-composer', () => {
       (root.shadowRoot.querySelector('[part="mic"]') as HTMLButtonElement).click();
       expect(spy).toHaveReceivedEventTimes(1);
     });
+
+    it('emits bsSubmit when Enter alone is pressed in the text field', async () => {
+      const { root, spyOnEvent } = await render(<bs-composer state="idle"></bs-composer>);
+      const spy = spyOnEvent('bsSubmit');
+      const textarea = root.shadowRoot.querySelector('textarea') as HTMLTextAreaElement;
+
+      textarea.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', bubbles: true, composed: true, cancelable: true }));
+
+      expect(spy).toHaveReceivedEventTimes(1);
+    });
+
+    it('does not emit bsSubmit and inserts a newline when Shift+Enter is pressed', async () => {
+      const { root, spyOnEvent } = await render(<bs-composer state="idle"></bs-composer>);
+      const spy = spyOnEvent('bsSubmit');
+      const textarea = root.shadowRoot.querySelector('textarea') as HTMLTextAreaElement;
+
+      const ev = new KeyboardEvent('keydown', { key: 'Enter', shiftKey: true, bubbles: true, composed: true, cancelable: true });
+      textarea.dispatchEvent(ev);
+
+      expect(spy.length).toBe(0);
+      expect(ev.defaultPrevented).toBe(false);
+    });
   });
 
   describe('state="generating"', () => {
@@ -249,5 +299,15 @@ describe('bs-composer', () => {
   it('does not render the waveform outside of the recording state', async () => {
     const { root } = await render(<bs-composer state="idle"></bs-composer>);
     expect(root.shadowRoot.querySelector('.bs-composer__waveform')).toBeNull();
+  });
+
+  it('reflects the state prop to a host attribute', async () => {
+    const { root, setProps, waitForChanges } = await render(<bs-composer state="idle"></bs-composer>);
+    expect(root).toEqualAttribute('state', 'idle');
+
+    await setProps({ state: 'recording' });
+    await waitForChanges();
+
+    expect(root).toEqualAttribute('state', 'recording');
   });
 });

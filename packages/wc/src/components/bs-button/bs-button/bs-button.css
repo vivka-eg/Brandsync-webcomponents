@@ -46,8 +46,17 @@
      step family, matching --bs-button-neutral-container (--bs-color-neutral-container) itself. */
   --bs-button-neutral-hover: var(--bs-color-neutral-container-hover);
   --bs-button-neutral-pressed: var(--bs-color-neutral-container-pressed);
-  --bs-button-outlined-border: var(--bs-border-primary);
-  --bs-button-outlined-border-hover: var(--bs-border-primary-hover);
+  /* Verified against Figma node 2842:50233/50230/50227/50224 (Style=Outline, States=Enabled/
+     Hovered/Focused/Pressed): border/text colors step through brand-600 -> 700 -> 800 across
+     enabled -> hover -> pressed, NOT a single "hover" color reused for both hover and pressed
+     (that was this variant's previous bug -- hover and pressed were indistinguishable, and
+     neither matched the enabled color Figma actually specifies). Text color matches
+     --bs-text-action-hover (brand-700) on BOTH hover and pressed per the spec -- pressed does NOT
+     get its own darker text color, only the border does. */
+  --bs-button-outlined-border: var(--bs-color-primary-default);
+  --bs-button-outlined-border-hover: var(--bs-color-primary-hover);
+  --bs-button-outlined-border-pressed: var(--bs-color-primary-pressed);
+  --bs-button-outlined-text-hover: var(--bs-text-action-hover);
   --bs-button-outlined-focus: var(--bs-border-primary-focus);
   --bs-button-outlined-container: var(--bs-color-primary-container);
 }
@@ -231,16 +240,17 @@
 .bs-button--outlined {
   background: transparent;
   color: var(--bs-color-primary-default);
-  border: 1.5px solid var(--bs-button-outlined-border);
+  border: 1px solid var(--bs-button-outlined-border);
 }
 .bs-button--outlined:hover:not(:disabled) {
   background: var(--bs-button-outlined-container);
   border-color: var(--bs-button-outlined-border-hover);
+  color: var(--bs-button-outlined-text-hover);
 }
 .bs-button--outlined:active:not(:disabled) {
   background: var(--bs-button-outlined-container);
-  color: var(--bs-color-primary-pressed);
-  border-color: var(--bs-button-outlined-border-hover);
+  color: var(--bs-button-outlined-text-hover);
+  border-color: var(--bs-button-outlined-border-pressed);
 }
 .bs-button--outlined:disabled {
   opacity: var(--bs-opacity-disabled);

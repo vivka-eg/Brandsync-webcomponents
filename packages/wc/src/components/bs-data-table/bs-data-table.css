@@ -1,5 +1,7 @@
 :host {
   display: block;
+  --bs-data-table-cell-padding-y: var(--bs-spacing-200);
+  --bs-data-table-cell-padding-x: var(--bs-spacing-300);
 }
 
 .bs-data-table {
@@ -12,7 +14,7 @@
 
 .bs-data-table__header-cell {
   text-align: left;
-  padding: var(--bs-spacing-200) var(--bs-spacing-300);
+  padding: var(--bs-data-table-cell-padding-y) var(--bs-data-table-cell-padding-x);
   border-bottom: 1px solid var(--bs-border-default);
   font-weight: var(--bs-font-weight-semibold);
   color: var(--bs-text-secondary);
@@ -45,12 +47,12 @@
 }
 
 .bs-data-table__cell {
-  padding: var(--bs-spacing-200) var(--bs-spacing-300);
+  padding: var(--bs-data-table-cell-padding-y) var(--bs-data-table-cell-padding-x);
   border-bottom: 1px solid var(--bs-border-default);
 }
 
 .bs-data-table__select-col {
   width: var(--bs-spacing-500);
-  padding: var(--bs-spacing-200) var(--bs-spacing-300);
+  padding: var(--bs-data-table-cell-padding-y) var(--bs-data-table-cell-padding-x);
   border-bottom: 1px solid var(--bs-border-default);
 }

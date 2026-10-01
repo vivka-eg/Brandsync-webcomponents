@@ -40,6 +40,21 @@ attributes. See CONVENTIONS.md.
 | `bsSort`      |             | `CustomEvent<{ column: string; direction: "desc" \| "asc"; }>` |
 
 
+## Methods
+
+### `clearSelection() => Promise<void>`
+
+Clears the current row selection and emits `bsRowSelect` for each row that was selected, so
+parent-held selection state stays in sync. Lets consumers reset selection without remounting
+the whole table.
+
+#### Returns
+
+Type: `Promise<void>`
+
+
+
+
 ## Shadow Parts
 
 | Part            | Description                    |
