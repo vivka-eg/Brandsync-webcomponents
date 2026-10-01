@@ -1,0 +1,66 @@
+name: TEMP - Test story write-up
+
+# Temporary workflow for validating the scaffold + AI story-authoring steps in isolation, without
+# running the full build/test/publish pipeline. Manually triggered only. Delete this file once the
+# real release.yml path is confirmed working end-to-end.
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run build:all
+
+      - name: Scaffold story stubs
+        id: scaffold
+        run: |
+          react_log="$(node packages/react-storybook/scripts/scaffold-new-stories.js)"
+          echo "$react_log"
+          angular_log="$(node packages/angular-storybook/scripts/scaffold-new-stories.js)"
+          echo "$angular_log"
+          react_new="$(echo "$react_log" | grep -oP '(?<=new component\(s\): ).*' || true)"
+          angular_new="$(echo "$angular_log" | grep -oP '(?<=new component\(s\): ).*' || true)"
+          echo "react_new=$react_new" >> "$GITHUB_OUTPUT"
+          echo "angular_new=$angular_new" >> "$GITHUB_OUTPUT"
+
+      - name: Write real story content for new components
+        if: steps.scaffold.outputs.react_new != '' || steps.scaffold.outputs.angular_new != ''
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          REACT_NEW: ${{ steps.scaffold.outputs.react_new }}
+          ANGULAR_NEW: ${{ steps.scaffold.outputs.angular_new }}
+        run: |
+          npm install -g @anthropic-ai/claude-code
+          claude -p "New components were just published and given minimal boilerplate story stubs that need real content:
+          - React (packages/react-storybook/src/stories/*.stories.tsx): $REACT_NEW
+          - Angular (packages/angular-storybook/src/stories/*.stories.ts): $ANGULAR_NEW
+          (either list may be empty -- only touch files for the package(s) with names listed.)
+
+          For each name listed, in each package it's listed for:
+          1. Read its real source-of-truth content under packages/wc/src/components/ -- its .stories.ts (args/variants), .mdx (usage/when-to-use), and .tsx (prop/slot/part JSDoc). The directory may be nested one level deeper under a shared family folder (e.g. bs-button/bs-icon-button/) -- search if the direct kebab-case path doesn't exist.
+          2. Read the target package's own generated type definitions for that component's props/events (already built locally: packages/react/dist/index.d.ts, or packages/angular/dist/lib/components.d.ts).
+          3. Read ONE existing, fully-authored story already in that SAME target package (e.g. BsButton.stories.tsx / BsButton.stories.ts) as the format/convention reference.
+          4. Overwrite the existing stub file for this component with a real story: realistic args/variants translated from the wc story, a parameters.docs.description.component block condensed from the wc component's class-level JSDoc, and per-prop argTypes descriptions sourced from that prop's own JSDoc. Do not invent content that has no source -- leave a prop undescribed rather than guessing.
+          5. Do not touch any file other than the stub(s) named above." \
+          --allowedTools "Read,Write,Edit,Glob,Grep" \
+          --dangerously-skip-permissions
+
+      - name: Show the result (no commit, just inspection)
+        run: |
+          echo "=== git diff --stat ==="
+          git diff --stat
+          echo "=== BsAccordion.stories.tsx (react) ==="
+          cat packages/react-storybook/src/stories/BsAccordion.stories.tsx 2>/dev/null || echo "(not found)"
+          echo "=== BsAccordion.stories.ts (angular) ==="
+          cat packages/angular-storybook/src/stories/BsAccordion.stories.ts 2>/dev/null || echo "(not found)"
