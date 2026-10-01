@@ -13,9 +13,9 @@ const config: StorybookConfig = {
   },
   // Serves public/ at the site root (e.g. public/brand-logo.svg -> /brand-logo.svg), so this
   // could reference static assets as a plain absolute path in both `storybook dev` and
-  // `build-storybook`, mirroring the sibling Brandsync-react repo.
+  // `build-storybook`, mirroring the sibling react-storybook package.
   staticDirs: ['../public'],
-  // Unlike the Vite-based builder the sibling Brandsync-react repo uses (which handles plain CSS
+  // Unlike the Vite-based builder the sibling react-storybook package uses (which handles plain CSS
   // imports out of the box), @storybook/angular's webpack5 builder ships with no rule at all for
   // `.css` files -- needed here because .storybook/preview.ts does
   // `import '@brandsync/wc/dist/brandsync-wc/brandsync-wc.css'` to load the --bs-* design

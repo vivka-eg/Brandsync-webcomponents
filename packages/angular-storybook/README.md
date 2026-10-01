@@ -1,14 +1,12 @@
 # Brandsync Angular Storybook
 
-A Storybook showcase for [`@brandsync/angular`](https://www.npmjs.com/package/@brandsync/angular),
-consuming it as a **real published npm package**, not local source. This exists specifically to
-prove out the published package's own usage as an Angular consumer would experience it -- separate
-from [brandsync-web-components](https://github.com/vivka-eg/Brandsync-web-components), whose own
-Storybook demos local web-component source directly via `@storybook/web-components-vite`, and from
-the sibling [Brandsync-react](https://github.com/vivka-eg/Brandsync-react) repo, which does the
-same thing for `@brandsync/react`.
+A Storybook showcase for [`@brandsync/angular`](https://www.npmjs.com/package/@brandsync/angular).
+A sibling workspace package in the `brandsync-web-components` monorepo, alongside `packages/wc`
+(whose own Storybook demos local web-component source directly via
+`@storybook/web-components-vite`) and `packages/react-storybook` (the same idea as this package,
+for `@brandsync/react`).
 
-## Why a separate repo
+## Why a separate package, not folded into `packages/angular` itself
 
 Every component here is imported the same way a real consumer would:
 
@@ -16,9 +14,11 @@ Every component here is imported the same way a real consumer would:
 import { BsButton } from '@brandsync/angular';
 ```
 
-No relative imports into another repo's `src/`, no local `dist/` -- if a change lands here, it's
-because the *published* package's own behavior changed, not because of anything specific to this
-repo's own source.
+npm workspaces resolves that to `packages/angular`'s real built output via a symlink (not a
+relative import into its `src/`) -- so if a change lands here, it's because the package's own
+behavior changed, not because of anything specific to this package's own source. Keeping the
+Storybook in its own package (rather than inside `packages/angular` itself) keeps Storybook's own
+devDependencies out of the actual publishable package.
 
 ## Design tokens
 
@@ -50,5 +50,6 @@ npm run storybook
 
 ## Deployment
 
-Pushing to `main` triggers `.github/workflows/storybook.yml`, which builds and deploys this
-Storybook to GitHub Pages.
+Pushing to `main` (from the monorepo root) triggers `.github/workflows/storybook.yml`, which
+builds this Storybook along with `packages/wc`'s and `packages/react-storybook`'s, and deploys all
+three together to GitHub Pages -- this package's build lands under the `/angular/` subpath.
