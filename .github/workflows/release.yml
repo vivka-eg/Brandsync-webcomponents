@@ -98,8 +98,13 @@ jobs:
       # lands on the same review-gated PR as the stub fallback -- never auto-merged.
       - name: Write real story content for new components
         if: steps.changesets.outputs.published == 'true' && (steps.scaffold.outputs.react_new != '' || steps.scaffold.outputs.angular_new != '')
-        uses: anthropics/claude-code-action@main
+        uses: anthropics/claude-code-action@v1
         with:
+          # Default mode detection expects a PR/issue-comment event (@claude mentions) -- without
+          # this, a plain `push`-triggered workflow fails outright with "Unsupported event type:
+          # push" before even reading the prompt below. `automation` is the headless mode for
+          # running on arbitrary trigger events like this one.
+          mode: automation
           prompt: |
             New components were just published and given minimal boilerplate story stubs that need
             real content:
