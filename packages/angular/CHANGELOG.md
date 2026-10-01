@@ -1,5 +1,13 @@
 # @brandsync/angular
 
+## 1.5.3
+
+### Patch Changes
+
+- 1db8ce3: No user-facing change -- re-triggering a clean release cycle to verify the `claude-code-action` fix (`mode: automation`, needed for its push-triggered CI invocation).
+- Updated dependencies [1db8ce3]
+  - @brandsync/wc@1.5.3
+
 ## 1.5.2
 
 ### Patch Changes
