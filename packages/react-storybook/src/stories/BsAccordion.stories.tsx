@@ -22,6 +22,11 @@ const ControlledAccordion = ({ expanded: initial = false, ...rest }: ComponentPr
     </div>
   );
 };
+// Without this, the production build's minifier strips this wrapper's name, and Storybook's
+// "Show code" panel (which reads the rendered element's runtime name/displayName, not the
+// original source text) ends up showing a mangled single-letter name instead of something
+// meaningful.
+ControlledAccordion.displayName = 'BsAccordion';
 
 const meta: Meta<typeof BsAccordion> = {
   title: 'Components/BsAccordion',
