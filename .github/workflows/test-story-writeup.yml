@@ -15,6 +15,17 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+
+      # Simulates "bs-accordion doesn't have a story yet" entirely within this ephemeral runner's
+      # own checkout -- deletes the files here, never commits/pushes anything back, so main and the
+      # live deployed Storybook are completely untouched. Lets the scaffold step genuinely detect
+      # something missing (instead of skipping, since bs-accordion's real stories already exist on
+      # main), so the AI step actually runs instead of being skipped like the last test run.
+      - name: Simulate a missing story (local to this runner only)
+        run: |
+          rm -f packages/react-storybook/src/stories/BsAccordion.stories.tsx
+          rm -f packages/angular-storybook/src/stories/BsAccordion.stories.ts
+
       - uses: actions/setup-node@v4
         with:
           node-version: 22
